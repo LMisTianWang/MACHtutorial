@@ -2,91 +2,122 @@
 .. centered::
     :ref:`aero_icem` | :ref:`aero_cgnsutils`
 
-
 .. _aero_pyhyp:
 
 **************
 Volume Meshing
 **************
 
-Content
-=======
-The objective of this chapter is to create a volume mesh using pyhyp meshing software. pyhyp is based on a hyperbolic grid generation scheme. Compared to elliptic grid generation methods the speed of the scheme remains one to two orders of magnitude faster than typical.
+Introduction
+================================================================================
+The objective of this section is to create a volume mesh using pyHyp.
+The surface mesh serves as the seed for hyperbolically marching the mesh to the farfield.
+Generating the volume mesh in this way is fast, repeatable, and results in a high-quality mesh.
+More details on pyHyp can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_ or in the code itself.
 
-Documentation for the tutorial
-==============================
-The python file created for pyHyp in this tutorial is based on the `pyhyp doc <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_ . The section of interest is called ‘usage with Plot3d Files’. It contains a well-detailed example for a sphere where each input parameter is explained. It may also be useful later to read “Usage with CGNS Files”. If you want to have a better understand of the code, you may want to read the theoretical article of Chan and Steger available in the reference directory:
+Files
+================================================================================
+Navigate to the directory ``aero/meshing/volume`` in your tutorial folder.
+Copy the following files from the surface meshing directory:
 ::
-	$ cd ~/hg/pyhyp/references
 
-If you are in need later of a specific option, you may want to take a look also at the python code file:
-::
-	$ gedit ~hg/pyhyp/python/pyHyp.py
+    $ cp ../surface/wing.cgns .
 
-Look for 'class pyHyp(object)' with ctrl+g. All the options available and default parameters are commented within the pyHyp class.
+Create the following empty runscripts in the current directory:
 
-Generation of the input python file
-===================================
-Open the file pymesh.py with your favorite text editor.
-::
-	$ cd PYHYP
-	$ gedit pymesh.py
+- ``run_pyhyp.py``
 
-Before copying from  `pyhyp documentation <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_  the first block of code in ‘usage with Plot3d Files’ inside pymesh.py, read the ‘usage with Plot3d Files’ section.
-As you saw in ‘usage with Plot3d Files’ the python file is dived in 3 parts:
+Dissecting the pyHyp runscript
+================================================================================
+Open the file ``run_pyhyp.py`` with your favorite text editor.
+Then copy the code from each of the following sections into this file.
 
-#. Import
-#. Options
-#. Generation and writing (call to pyHyp and write CGNS functions)
+Import libraries
+----------------
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+   :start-after: #rst: Imports
+   :end-before: #rst: general
 
-You can almost use the copy as it is.  However, a few input parameters values need to be changed beforehand.
-
-Import section
---------------
-No changes are needed
+This is the standard way of importing the pyHyp library.
 
 Options
 -------
-* Change the inputFile name to the wing mesh you created under ICEM (CGNS file).
-* We use a CGNS mesh file. Correct  'Plot3d' to 'cgns' .
-* If you remember we didn't define any boundary conditions for the symmetric wall with ICEM software.  We left  the mesh open on the root. As the mesh edges on the wing's root are not connected to anything, you must define them now as part of the symmetric plan by adding the option 'unattachedEdgesAreSymmetry':True.
+For each module in MACH, we generally pass in options using a dictionary.
+A complete list of definitions of the pyHyp options can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_ under the section "Usage with Plot3d Files".
+Here we will point a few of the more basic options.
+For pyHyp, the options can be organized like so:
 
-* Define the far-field with 'outerFaceBC': 'farfield'.
-* As you build a multiblock mesh you want to add the connection between each block: 'AutoConnect': 'True'
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: general
+    :end-before: #rst: grid
 
-Grid Parameters
-****************
-* Adjust the number of layer to 90.
-* Fix the tickness of the first layer to 1e-5.
-* Put the far-field distance at 20*wingspan (around 20m): 'marchDist':20.0*20
+General options:
 
-Pseudo Grid parameters
-**********************
-Putting a negative value for the next two parameters implies the mesh generator will automatically determine the best value.
+    ``inputFile``
+        Name of the surface mesh file.
 
-* ps0=-1
-* pGridRatio=-1
-* Delete 'rMin option.
+    ``fileType``
+        Filetype of the surface mesh file.
+        Either ``cgns`` or ``plot3d``.
 
-Smoothing parameters
-********************
-* epsE= 2.0
-* epsI= 4.0
-* theta= 2.0
+    ``unattachedEdgesAreSymmetry``
+        Tells pyHyp to automatically apply symmetry boundary conditions to any unattached edges (those that do not interface with another block).
 
-Solution parameters
-*******************
-* Delete the 'preConLag' option.
+    ``outerFaceBC``
+        Tells pyHyp to which boundary condition to apply to the outermost face of the extruded mesh.
 
-Generation and writing
-**********************
-* In hyp.writeCGNS('sphere.cgns') you want to change the name in order to be more explicit that you work on a wing ( for instance 'wing_mvol.cgns').
+    ``families``
+        Name given to wall surfaces. If a dictionary is submitted, each wall patch can have a different name. This can help the user to apply certain operations to specific wall patches in ADflow.
 
-Run ADflow
-==========
-Once your python file is finished you can run it with python in the terminal:
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: grid
+    :end-before: #rst: pseudo
+
+Grid parameters:
+
+    ``N``
+        Number of nodes in off-wall direction.
+        If multigrid will be used this number should be2\ :sub:`m-1` n+1, where m is the number of multigrid levels and n is the number of layers on the coarsest mesh.
+
+    ``s0``
+        Thickness of first off-wall cell layer.
+
+    ``marchDist``
+        Distance of the far-field.
+
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: pseudo
+    :end-before: #rst: smoothing
+
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: smoothing
+    :end-before: #rst: solution
+
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: solution
+    :end-before: #rst: run pyHyp
+
+Running pyHyp is quite simple, as shown below.
+After the mesh extrusion is done, we can write the volume mesh with the ``writeCGNS`` function.
+
+.. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
+    :start-after: #rst: run pyHyp
+
+Run it yourself!
+================================================================================
+You can now run the python file with the command:
 ::
-	$ python pymesh.py
+
+    $ python run_pyhyp.py
+
+For larger meshes, you will want to run pyHyp as a parallel process.
+This can be done with the command:
+::
+
+    $ mpirun -np 4 python run_pyhyp.py
+
+where the number of processors is given after ``-np``.
+You can open ``wing_vol.cgns`` in Tecplot to view the volume mesh.
 
 .. centered::
     :ref:`aero_icem` | :ref:`aero_cgnsutils`

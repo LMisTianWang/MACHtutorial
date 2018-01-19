@@ -160,6 +160,8 @@ Blocking
     After selecting the fifth icon, select OK or Apply at the bottom of the Create Block menu.
     If the conversion was successful, in the dialog box there will be a message reading "...Blocking successfully converted to 2D..."
 
+    Remove block on symmetry plane.
+
 3. Associate blocking to geometry
 
 4. Create Pre-Mesh

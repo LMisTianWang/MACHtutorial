@@ -1,41 +1,42 @@
+#rst: Imports
 from pyhyp import pyHyp
-
-# pyHyp options (begin)
+#rst: general
 options= {
-
     # ---------------------------
-    #        Input File
+    #   General options
     # ---------------------------
     'inputFile':'wing.cgns',
     'fileType':'cgns',
     'unattachedEdgesAreSymmetry':True,
-	'outerFaceBC':'farfield',
- 	'autoConnect':'True',
+    'outerFaceBC':'farfield',
+    'autoConnect':'True',
     'BC':{},
     'families':'wall',
+    #rst: grid
     # ---------------------------
-    #        Grid Parameters
+    #   Grid Parameters
     # ---------------------------
-    'N': 100,
+    'N': 49,
     's0':1e-5,
-	'marchDist':20.0*20,
+    'marchDist':23.2*14,
+    #rst: pseudo
     # ---------------------------
     #   Pseudo Grid Parameters
     # ---------------------------
     'ps0':-1,
     'pGridRatio':-1,
     'cMax': 10.0,
-
+    #rst: smoothing
     # ---------------------------
     #   Smoothing parameters
     # ---------------------------
-    'epsE': 2.0,
-    'epsI': 4.0,
-    'theta': 2.0,
+    'epsE': 1.0,
+    'epsI': 2.0,
+    'theta': 3.0,
     'volCoef': .2,
     'volBlend': 0.0005,
     'volSmoothIter': 20,
-
+    #rst: solution
     # ---------------------------
     #   Solution Parameters
     # ---------------------------
@@ -43,8 +44,7 @@ options= {
     'kspMaxIts': 1500,
     'kspSubspaceSize':50
     }
-# pyHyp options (end)
-
+#rst: run pyHyp
 hyp = pyHyp(options=options)
 hyp.run()
-hyp.writeCGNS('cgns_utils/wing_mvol.cgns')
+hyp.writeCGNS('wing_vol.cgns')

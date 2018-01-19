@@ -65,13 +65,13 @@ We invite you, especially as a new user, to take notes of the parts that you fin
 
 The *.rst files in the doc directory contain direct links to the python scripts in the tutorial directory to avoid code duplication.
 This is done using the ``start-after`` and ``end-before`` options of Sphinx's native ``literalinclude`` directive.
-We adopt the convention of using ``#rst0: <section subject>`` and ``#rst1: <section subject>`` as the markers for the start and end of each ``literalinclude`` section, like so:
+We adopt the convention of using ``#rst: <section subject>`` as the marker for the start and end of each ``literalinclude`` section, like so:
 ::
-    #rst0: Simple addition
+    #rst: Simple addition (begin)
     a = 2
     b = 3
     c = a + b
-    #rst1: Simple addition
+    #rst: Simple addition (end)
 
 Please adopt this same convention for any future developments to the tutorial.
 
