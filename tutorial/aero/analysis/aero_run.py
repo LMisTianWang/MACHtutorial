@@ -1,65 +1,63 @@
-# This is a template that should be used for setting up
-# RANS analysis scripts
-
-# ======================================================================
-#         Import modules
-# ======================================================================
+#rst: Imports
 import numpy
-from mpi4py import MPI
-from baseclasses import *
 from adflow import ADFLOW
-
-# ======================================================================
-#         Input Information -- Modify accordingly!
-# ======================================================================
-outputDirectory = './output.d'
-gridFile = 'wing_mvol2.cgns'
-alpha = 1.5
-mach = 0.82
-bRef =12.53
-areaRef = 37.1982321487
-chordRef = 2.96
-MGCycle = '2w'
-altitude = 10000
-name = 'fc'
-
+from baseclasses import *
+from mpi4py import MPI
+#rst: ADflow options
 aeroOptions = {
-# Common Parameters
-'gridFile':gridFile,
-'outputDirectory':outputDirectory,
+    # I/O Parameters
+    'gridFile':'wing_vol.cgns',
+    'outputDirectory':'output',
+    'monitorvariables':['resrho','cl','cd'],
+    'writeTecplotSurfaceSolution':True,
 
-# Physics Parameters
-'equationType':'RANS',
-'smoother':'dadi',
+    # Physics Parameters
+    'equationType':'RANS',
 
-# Common Parameters
-'CFL':5.0,
-'CFLCoarse':1.25,
-'MGCycle':MGCycle,
-'MGStartLevel':-1,
-'nCyclesCoarse':250,
-'nCycles':100000,
-'monitorvariables':['resrho','cl','cd'],
-'useNKSolver':False,
+    # Solver Parameters
+    'smoother':'dadi',
+    'CFL':1.5,
+    'CFLCoarse':1.25,
+    'MGCycle':'3w',
+    'MGStartLevel':-1,
+    'nCyclesCoarse':250,
 
-# Convergence Parameters
-'L2Convergence':1e-6,
-'L2ConvergenceCoarse':1e-2,
+    # ANK Solver Parameters
+    'useANKSolver':True,
+    'ankswitchtol':1e-1,
+
+    # NK Solver Parameters
+    'useNKSolver':True,
+    'nkswitchtol':1e-4,
+
+    # Termination Criteria
+    'L2Convergence':1e-6,
+    'L2ConvergenceCoarse':1e-2,
+    'nCycles':1000,
 }
-
-
-# Aerodynamic problem description
-ap = AeroProblem(name=name, alpha=alpha, mach=mach, altitude=altitude, areaRef=areaRef, chordRef=chordRef,evalFuncs=['cl','cd'])
-
+#rst: Start ADflow
 # Create solver
 CFDSolver = ADFLOW(options=aeroOptions)
-CFDSolver.addLiftDistribution(150, 'y')
-# Solve and evaluate functions
-funcs = {}
+
+# Add features
+CFDSolver.addLiftDistribution(150, 'z')
+CFDSolver.addSlices('z', numpy.linspace(0.1, 14, 10))
+
+#rst: Create AeroProblem
+ap = AeroProblem(name='wing',
+    mach=0.82,
+    altitude=10000,
+    alpha=1.5,
+    areaRef=45.5,
+    chordRef=3.25,
+    evalFuncs=['cl','cd']
+)
+#rst: Run ADflow
+# Solve
 CFDSolver(ap)
+#rst: Evaluate and print
+funcs = {}
 CFDSolver.evalFunctions(ap, funcs)
-
-
-# Print the evaluatd functions
+# Print the evaluated functions
 if MPI.COMM_WORLD.rank == 0:
     print funcs

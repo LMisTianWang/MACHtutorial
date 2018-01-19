@@ -9,27 +9,33 @@
 Mesh Manipulation Tools
 ***********************
 
-Content
-=======
+Introduction
+================================================================================
+There are several simple meshing operations that can be done easily enough from the command line.
+For example, creating a 3D cartesian block of a given size with a specified uniform cell size only requires 4 parameters.
+We have developed a suite of functions called `cgnsUtilities <https://bitbucket.org/mdolab/cgnsutilities>`_ that can be called from the command line to perform simple, repeatable tasks like this.
 
+Files
+================================================================================
+Navigate to the directory ``aero/surface/volume`` in your tutorial folder.
+We will perform operations on the file ``wing_vol.cgns``.
 
-Process
-=======
-Open the file TUTORIAL/AERO/CGNS/coarsen.sh.
+cgnsUtilities Operations
+================================================================================
+To get a list of all of the operations available with cgnsUtilities, run the command:
+::
+
+    $ cgns_utils -h
+
+Coarsening a volume mesh
+------------------------
+Although our volume mesh is already very coarse, we can coarsen it even further.
+This function is more useful in instances where we start with a very fine mesh.
+To coarsen a mesh, run the command:
 
 ::
-  cgns_utils symmzero wing_mvol.cgns z wing_mvol0.cgns
-  cgns_utils coarsen wing_mvol0.cgns wing_mvol1.cgns
-  cgns_utils coarsen wing_mvol1.cgns ../ADflow/wing_mvol2.cgns
 
-There are three steps in the file:
-# Define the symetric plan ("symmzero").
-# Coarse the mesh one time ("coarsen").
-# Coarse the mesh one time ("coarsen").
-
-Run the coarsen.sh file with the command "bash":
-::
-	$ bash coarsen.sh
+    $ cgns_utils coarsen wing_vol.cgns wing_vol_coarsened.cgns
 
 .. centered::
     :ref:`aero_pyhyp` | :ref:`aero_adflow`
