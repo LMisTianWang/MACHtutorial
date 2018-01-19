@@ -28,8 +28,11 @@ import os
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'numpydoc',
-    'sphinxcontrib.blockdiag', 'rst2pdf.pdfbuilder', 'sphinx.ext.graphviz']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode',
+    # 'numpydoc',
+    # 'sphinxcontrib.blockdiag',
+    # 'rst2pdf.pdfbuilder',
+    'sphinx.ext.graphviz']
 
 blockdiag_fontpath = '/usr/share/fonts/truetype/freefont/FreeSans.ttf'
 
@@ -50,8 +53,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'MDOtutorial'
-copyright = u'2016, MDOLab'
+project = u'MACHtutorial'
+copyright = u'2018, MDOLab'
 author = u'MDOLab'
 
 # The version info for the project you're documenting, acts as replacement for

@@ -17,9 +17,21 @@ However, this tutorial will teach you how to generate a wing surface from airfoi
 pyGeo is set up to loft a surface between a set of airfoils distributed along the span of the wing.
 For more details on the options in pyGeo see the `docs <http://mdolab.engin.umich.edu/doc/packages/pygeo/doc/pyGeo.html>`_.
 
+Files
+================================================================================
+Navigate to the directory ``aero/geometry`` in your tutorial folder.
+Copy the following files from the MACHtutorial repository:
+::
+
+    $ cp ~/hg/machtutorial/tutorial/aero/geometry/rae2822.dat .
+
+Create the following empty runscripts in the current directory:
+
+- ``generate_geometry.py``
+
 Dissecting the pyGeo runscript
 ================================================================================
-Create a new file in ``aero/geometry`` called ``generate_wing.py``.
+Open the file ``generate_wing.py`` in your favorite text editor.
 Then copy the code from each of the following sections into this file.
 
 Import libraries
@@ -51,9 +63,9 @@ If there are a large number of sections, the number of control points needs to b
 
 For this tutorial, we use the RAE 2822 transonic airfoil as the cross-section of our wing.
 A visualization of the airfoil geometry is given on Figure 1.
-The coordinates of the airfoil are contained in the file ``aero/geometry/rae2822.dat``.
+The coordinates of the airfoil are contained in the file ``rae2822.dat``.
 
-.. figure:: figures/aero/geometry/rae2822.png
+.. figure:: images/RAE2822.png
    :scale: 30
    :align: center
    :alt: RAE 2822 Transonic Airfoil
