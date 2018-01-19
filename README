@@ -1,0 +1,22 @@
+This repository contains a step-by-step tutorial for the tools used in the MDOlab.
+These tools fall under the umbrella of the framework MDO of Aircraft Configurations
+with High-fidelity (MACH).
+
+Building the docs
+-----------------
+Navigate to MDOtutorial/doc/
+
+Type "make html". This generates html files in _build/html/.
+
+Type "firefox _build/html/index.html" or "google-chrome _build/html/index.html"
+to open the docs in your browser.
+
+Required Packages to build
+--------------------------
+Sphinx (1.6.3)
+rst2pdf (0.93)
+sphinxcontrib_blockdiag (1.5.5)
+
+Downloads (see downloads folder)
+--------------------------------
+wing_mvol.cgns (download to TUTORIAL/AERO/PYHYP)
