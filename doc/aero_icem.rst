@@ -67,6 +67,8 @@ To adjust your view of the geometry in ICEM the following functions are possible
     - Drag mouse up/down: Fast zoom
     - Drag mouse left/right: Rotate view in viewing plane
 
+.. _icem_appearance:
+
 Changing the appearance of the geometry
 ---------------------------------------
 .. image:: images/icem_AppearanceButtons.png
@@ -117,19 +119,76 @@ All geometry creation and manipulation is done under the ``Geometry`` tab, outli
 .. image:: images/icem_TabGeometry.png
    :scale: 80
 
-1. Extract curves from surfaces. (or repair geometry)
+1. Create curves and points from surfaces.
 
     You will notice that the geometry section of the model tree contains only Subsets and Surfaces.
     We want to see the curves and points that define the boundaries of these surfaces.
-    This can be done with the
+    This can be done by clicking on the ``Repair Geometry`` button in the ``Geometry`` tab.
 
-2. Create guide curves for leading edge
+    The ``Repair Geometry`` section will open up in the lower left pane.
+    The default operation in this section is ``Build Diagnostic Topology`` (outlined in blue).
+    This will create the curves and points that define the surface intersections, if they are missing.
+    Click ``Apply`` at the bottom of the pane (the default options should be sufficient).
+    You will see red and yellow curves appear on the geometry.
+    The red curves denote an intersection between two surfaces and the yellow curves denote unattached surface edges.
+    Additionally, points appear at the corners of the surfaces.
+    If you look at the model tree now, you should see Subsets, Points, Curves, and Surfaces under the Geometry branch and a single part named "WING" in the Parts branch.
 
-    The mesh block that covers the leading edge region of the wing will extend...
-    First create points at 2% of the upper and lower surfaces of the wing at the root and at the tip.
+    .. image:: images/icem_ModelTree2.png
+       :scale: 80
+
+    There are some curves and points missing still.
+    If you look closely at the trailing edge of the wing, you will see that only one curve was made when we repaired the geometry.
+    This is because the lower surface of the wing is continuous with the trailing edge surface, so there is no intersection.
+    We need to make a curve to define the lower edge of the trailing edge.
+    First we need to create some points.
+    To do this, let's go to the ``Create Point`` button of the ``Geometry`` tab and then select ``Curve Ends`` in the lower left pane.
+
+    .. image:: images/icem_PointsCurveEnds.png
+       :scale: 80
+
+    Select "both" in the ``How`` drop-down menu and then click the arrow to the right of the ``Curve(s)`` box.
+    Now select the curve on the upper edge of the trailing edge and the lower surface curves at the root and tip of the wing.
+    Now let's go to the ``Create/Modify Curve`` button of the ``Geometry`` tab.
+
+    .. image:: images/icem_CurveFromPoints.png
+       :scale: 80
+
+    Select the first option in the lower left pane (``From Points``).
+    This will create a straight line between two points or a spline between multiple points.
+    Select the arrow to the right of the ``Points`` box and then choose the points at either end of the lower edge of the trailing edge.
+    For good measure, you can close off the trailing edge by creating curves between the upper and lower surfaces at the root and tip of the trailing edge.
+    In the end, your trailing edge should look like this (only Curves and Points are turned on in the Geometry tree).
+
+    .. image:: images/icem_TrailingEdgeCurves.png
+       :scale: 30
+
+2. Create auxiliary curves
+
+    Now let's create some curves to help define the leading edge section of the surface mesh.
+    First we need to create some points, so go back to the ``Create Point`` section.
+    This time select the ``Parameter along a Curve`` operation.
+
+    .. image:: images/icem_PointsParameter.png
+       :scale: 80
+
+    Put 0.01 in the ``Parameters`` box and then click the arrow to the right of the ``Curve`` box.
+    Now select the upper and lower airfoil curves at the wingtip.
+    You should see two points appear near the leading edge.
+    For the root airfoil section, the curves are flipped, so we need to enter 0.99 in the ``Parameters`` box and then select the upper and lower curves just like we did for the wingtip.
+
+    Now we need to connect these points with curves.
+    Go back to the ``Create/Modify Curve`` button under the ``Geometry`` tab and select the ``From Points`` operation.
+    Connect the points on the upper surface with one line and the points on the lower surface with another line.
+    Now the leading edge of your wing should look like this:
+
+    .. image:: images/icem_LeadingEdgeCurves.png
+       :scale: 30
 
 Blocking
 --------
+The blocking is the underlying structure that defines the mesh.
+In the blocking we can define how many cells we want and how we want them to be arranged.
 
 1. Create 3D blocking with bounding box
 
@@ -138,14 +197,15 @@ Blocking
 
     To do this, under the ``Blocking`` tab, select the first icon, ``Create Block`` shown here:
 
-    .. image:: images/icem_BlockingMenu.png
+    .. image:: images/icem_TabBlocking.png
         :scale: 80
 
     This opens a menu in the lower left corner of the window.
     With the default options, click the button next to the input box for the entities (if it was not automatically selected).
     This button allows you to select the entities you want to create a blocking for from the CAD model.
     Directions for selecting entities are found in red text at the bottom of the CAD window.
-    To create a bounding box around the entire wing, select all of the wing entities.
+    To create a bounding box around the entire wing, select all of the wing entities by clicking and dragging with the left mouse button.
+
 
     .. image:: images/icem_CreateBlock.png
         :scale: 80
@@ -155,28 +215,99 @@ Blocking
     Now the 3-D bounding box needs to be converted to a 2-D blocking (as we only want a surface mesh output from ICEM).
     To do this, select the fifth icon in the ``Create Block`` menu (shown below).
 
-    .. image:: images/CreateBlockIcons.png
+    .. image:: images/icem_Blocking3Dto2D.png
+        :scale: 80
 
     After selecting the fifth icon, select OK or Apply at the bottom of the Create Block menu.
     If the conversion was successful, in the dialog box there will be a message reading "...Blocking successfully converted to 2D..."
 
-    Remove block on symmetry plane.
+    Look back at the model tree and you should see something like this (expand the Blocking tab).
+
+    .. image:: images/icem_ModelTree3.png
+        :scale: 80
+
+    If you check the box next to ``Blocks``, you will see yellow surfaces appear surrounding the wing.
+    Since the wing root is on the symmetry plane, we want to remove the block along the symmetry plane.
+    This can be done with the ``Delete Block`` button in the ``Blocking`` tab.
+    Check the box for "Delete permanently" and then select the yellow surface parallel with the root airfoil.
+    It should become highlighted like in the image below.
+
+    .. image:: images/icem_DeleteBlock.png
+        :scale: 30
+
+    To complete the operation, click the middle mouse button.
 
 3. Associate blocking to geometry
 
-4. Create Pre-Mesh
+    In order to control the shape of the surface mesh, we can associate the block edges to curves on the geometry.
+    We can do this with the ``Associate`` button in the ``Blocking`` tab.
+    First, let's associate the vertices of the blocks to points on the geometry.
+
+    .. image:: images/icem_AssociateVertex.png
+        :scale: 80
+
+    The first operation in the ``Associate`` pane allows us to associate vertices to points, curves, or surfaces.
+    We want to associate the 8 vertices to the corresponding 8 points at the corners of our wing.
+    Click the arrow to the right of the ``Vertex`` box.
+    The first selection in the view pane will choose the vertex and the second selection will choose the point to which it will be associated.
+    The association will happen immediately and the vertex should move to the same location as the point.
+    You can continue selecting vertex and point pairs until you are done.
+    After associating the vertices at the wing root, the blocking should look like this.
+
+    .. image:: images/icem_AssociatedVertices.png
+        :scale: 30
+
+    Now do the same thing at the wing tip.
+
+    The next step is to associate the block edges to the geometry.
+    Go to the second button in the ``Associate`` pane: ``Associate Edge to Curve``.
+    Now select the upper edge at the symmetry plane and then select the upper curve of the root airfoil.
+    You must confirm each selection by clicking the middle mouse button.
+    After the edge is associated, it should turn green.
+    Do the same thing with the lower edge and the lower curve of the root airfoil.
+    For the vertical edge at the leading edge of the root, we need to associate to both the upper and lower root airfoil curves.
+    First select the edge and confirm, and then select both airfoil curves and confirm.
+
+    Let's check out the state of the mesh at this point.
+    We can view the mesh by checking the box next to ``Pre-Mesh`` in the ``Geometry`` branch of the model tree.
+    If you are in wire mesh view, switch to a solid surface view (see :ref:`icem_appearance`).
+    You will see that the mesh is collapsed in on itself (don't worry, we'll fix it in the next step).
+
+4. Split and adjust edges
+
+    To remedy the collapsed mesh, we need to create some control points along the edges.
+
+    .. image:: images/icem_EditEdge.png
+        :scale: 80
+
+    Go to the ``Edit Edge`` button in the ``Blocking`` tab.
+    Under the ``Split Edge`` operation, choose the "Linear" method.
+    Then click the arrow to the right of the ``Edge`` box and select the upper horizontal edge at the symmetry plane.
+    Immediately, a point will snap to the associated curve (make sure you drag it up to the upper curve of the airfoil before you let go).
+    Once you let go of the mouse button, a dialog box will pop up with the following message:
+
+    .. image:: images/icem_UpdatePreMesh.png
+        :scale: 80
+
+    Select "Yes" and you will see the mesh snap up to the upper surface.
+    You can add a couple more control points to the upper edge and then do the same for the lower horizontal edge.
+
+    Now we want to do the same thing for the wingtip.
 
 5. Define edge properties
 
-6. Split and adjust edges
+6. Split Block
 
 7. Check mesh quality
 
 8. Ensure correct block orientation
 
-9. Convert to MultiBlock Mesh
+Convert to MultiBlock Mesh
+--------------------------
 
-10. Export the mesh
+Export the mesh
+---------------
+Export the mesh to a cgns file named 'wing.cgns'.
 
 .. centered::
     :ref:`aero_pygeo` | :ref:`aero_pyhyp`
