@@ -4,19 +4,17 @@ with High-fidelity (MACH).
 
 Building the docs
 -----------------
-Navigate to MDOtutorial/doc/
+From the terminal, navigate to ``machtutorial/doc``
 
-Type "make html". This generates html files in _build/html/.
+Run
+::
 
-Type "firefox _build/html/index.html" or "google-chrome _build/html/index.html"
-to open the docs in your browser.
+    $ make html.
+
+This generates html files in _build/html/.
+
+Run ``firefox _build/html/index.html`` or ``google-chrome _build/html/index.html`` to open the docs in your browser.
 
 Required Packages to build
 --------------------------
 Sphinx (1.6.3)
-rst2pdf (0.93)
-sphinxcontrib_blockdiag (1.5.5)
-
-Downloads (see downloads folder)
---------------------------------
-wing_mvol.cgns (download to TUTORIAL/AERO/PYHYP)
