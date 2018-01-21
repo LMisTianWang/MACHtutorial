@@ -1,11 +1,11 @@
 
 .. centered::
-   :ref:`FFD <OPTIM_ffd>` | :ref:`Summary <SUMMARY>` | :ref:`Next: structural optimization <OPTIM_STRUCT>`
+    :ref:`opt_ffd` | :ref:`opt_struct`
 
-.. _OPTIM_AERO:
+.. _opt_aero:
 
 ************************
-Aerodynamic optimization
+Aerodynamic Optimization
 ************************
 
 Content
@@ -42,7 +42,7 @@ Edit a new file called opt_rans.py inside TUTORIAL/OPTIM/OPT_AERO and import the
 	import warnings
 	warnings.filterwarnings("ignore")
 
-.. _OPTIM_AERO_MCO: 
+.. _OPTIM_AERO_MCO:
 
 Multipoint communication object
 ===============================
@@ -66,7 +66,7 @@ In this section, we define the RANS parameters. This section is similar to the o
 	#Physics Parameters,
 	#Common Parameters,
 	#Add the section: #Convergence Parameters: 'adjointL2Convergence':1e-10
-	
+
 	CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
 	CFDSolver.addLiftDistribution(200, 'z')
 
@@ -92,8 +92,8 @@ the AeroProblem functions are defined in the application program interface (API)
 FFD
 ===
 In this part, we define the geometric variables for the optimization problem. Here we are interested in a simple case of a twist deformation. In order to take into account the twist of the wing as a single design variable, it is required to define an axis. This axis will be used as a global design variable which will affect many control points (FFD, local design variables) of the geometry FFD. This part is similar to the one already explained in :ref:`FFD & FFD deformation <OPTIM_DEFORMATION_FFD>` (Don't forget to change the path of the FFDFile).
-The mesh deformation performed in :ref:`FFD & FFD deformation <OPTIM_DEFORMATION_FFD>` is not made explicit here. The mesh wrapping is done internally by ADflow (CFDsolver). First, set the DVGeometry class inside the CFD solver in order to perform the geometric deformations. Then, define the mesh warping options and objects for a multi-block mesh and set the mesh inside the CFD solver. Descriptions of the mesh warping functions and class are available on `pywarp API documentation  <http://mdolab.engin.umich.edu/doc/packages/pywarp/doc/API.html>`_. 
-::	
+The mesh deformation performed in :ref:`FFD & FFD deformation <OPTIM_DEFORMATION_FFD>` is not made explicit here. The mesh wrapping is done internally by ADflow (CFDsolver). First, set the DVGeometry class inside the CFD solver in order to perform the geometric deformations. Then, define the mesh warping options and objects for a multi-block mesh and set the mesh inside the CFD solver. Descriptions of the mesh warping functions and class are available on `pywarp API documentation  <http://mdolab.engin.umich.edu/doc/packages/pywarp/doc/API.html>`_.
+::
 	CFDSolver.setDVGeo(DVGeo)
 	meshOptions = {'gridFile':gridFile,'warpType':'algebraic',}
 	mesh = MBMesh(options=meshOptions, comm=comm)
@@ -103,8 +103,8 @@ The mesh deformation performed in :ref:`FFD & FFD deformation <OPTIM_DEFORMATION
 
 Geometric and aerodynamic functions
 ===================================
-We specify the cruiseFuncs and its sensibility. Inside cruiseFuncs, the objective geometric and aerodynamic variables are defined with a call to setDesignVars(x). After the new CFD problem is solved, the function returns the aerodynamics values such as drag and lift.  
-:: 
+We specify the cruiseFuncs and its sensibility. Inside cruiseFuncs, the objective geometric and aerodynamic variables are defined with a call to setDesignVars(x). After the new CFD problem is solved, the function returns the aerodynamics values such as drag and lift.
+::
 	def cruiseFuncs(x):
 		if MPI.COMM_WORLD.rank == 0:
 			print x
@@ -140,7 +140,7 @@ This function is described in the `optimization API documentation <http://mdolab
 		if printOK:
 			print 'funcs in obj:', funcs
 		return funcs
-	
+
 	optProb = Optimization('opt', MP.obj, comm=MPI.COMM_WORLD)
 	ap.addVariablesPyOpt(optProb)
 	DVGeo.addVariablesPyOpt(optProb)
@@ -150,15 +150,15 @@ Then we add the obj function and constraints to the optimization class.
 	optProb.addObj('obj', scale=1e4)
 	optProb.addCon('cl_con_'+ap.name, lower=0.0, upper=0.0, scale=1.0)
 
-Before calling the MP multipoint object, the optimization problem needs to be fully declared. Only after that, you can set to the MP multipoint class, the objective functions, and optimization problem for each proc with. 
+Before calling the MP multipoint object, the optimization problem needs to be fully declared. Only after that, you can set to the MP multipoint class, the objective functions, and optimization problem for each proc with.
 ::
 	MP.setProcSetObjFunc('cruise', cruiseFuncs)
 	MP.setProcSetSensFunc('cruise', cruiseFuncsSens)
 	MP.setObjCon(objCon)
 	MP.setOptProb(optProb)
-	
+
 	optProb.printSparsity()
-	
+
 PrintSparsity helps the user visualize what pyOptSparse has been given and ensure it is what the user expected. In order to verify that the optimization problem is set up correctly, you should always make a call to this function.
 Information for the function are available `here <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/api/optimization.html>`_.
 
@@ -176,9 +176,9 @@ To solve the optimization problem the SNOPT optimizer is selected. SNOPT is a sp
 		'Print file': outputDirectory + 'SNOPT_print.out',
 		'Summary file': outputDirectory + 'SNOPT_summary.out'
 		}
-	
+
 	opt = OPT('snopt', options=optOptions)
-	
+
 	histFile = outputDirectory + 'snopt_hist.hst'
 	sol = opt(optProb, MP.sens, storeHistory=histFile)
 	if MPI.COMM_WORLD.rank == 0:
@@ -194,7 +194,5 @@ Post-processing
 ===============
 For post-processing the optimization file a tool called pyOptview.py is available. Follow the instruction on the `post-processing documentation <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/postprocessing.html>`_.
 
-.. centered::  
-   :ref:`FFD <OPTIM_ffd>` | :ref:`Summary <SUMMARY>` | :ref:`Next: structural optimization <OPTIM_STRUCT>`
-
-
+.. centered::
+    :ref:`opt_ffd` | :ref:`opt_struct`

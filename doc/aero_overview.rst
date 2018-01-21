@@ -56,6 +56,5 @@ Directory Structure
         |-- output
         |-- aero_run.py
 
-
 .. centered::
     :ref:`intro` | :ref:`aero_pygeo`

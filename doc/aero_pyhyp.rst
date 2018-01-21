@@ -23,11 +23,11 @@ Copy the following files from the surface meshing directory:
 
     $ cp ../surface/wing.cgns .
 
-Create the following empty runscripts in the current directory:
+Create the following empty runscript in the current directory:
 
 - ``run_pyhyp.py``
 
-Dissecting the pyHyp runscript
+Dissecting the pyOptSparse runscript
 ================================================================================
 Open the file ``run_pyhyp.py`` with your favorite text editor.
 Then copy the code from each of the following sections into this file.
@@ -35,8 +35,8 @@ Then copy the code from each of the following sections into this file.
 Import libraries
 ----------------
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-   :start-after: #rst: Imports
-   :end-before: #rst: general
+   :start-after: #rst Imports
+   :end-before: #rst general
 
 This is the standard way of importing the pyHyp library.
 
@@ -48,8 +48,8 @@ Here we will point a few of the more basic options.
 For pyHyp, the options can be organized like so:
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: general
-    :end-before: #rst: grid
+    :start-after: #rst general
+    :end-before: #rst grid
 
 General options:
 
@@ -70,14 +70,14 @@ General options:
         Name given to wall surfaces. If a dictionary is submitted, each wall patch can have a different name. This can help the user to apply certain operations to specific wall patches in ADflow.
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: grid
-    :end-before: #rst: pseudo
+    :start-after: #rst grid
+    :end-before: #rst pseudo
 
 Grid parameters:
 
     ``N``
         Number of nodes in off-wall direction.
-        If multigrid will be used this number should be2\ :sub:`m-1` n+1, where m is the number of multigrid levels and n is the number of layers on the coarsest mesh.
+        If multigrid will be used this number should be 2\ :sup:`m-1` (n+1), where m is the number of multigrid levels and n is the number of layers on the coarsest mesh.
 
     ``s0``
         Thickness of first off-wall cell layer.
@@ -86,22 +86,22 @@ Grid parameters:
         Distance of the far-field.
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: pseudo
-    :end-before: #rst: smoothing
+    :start-after: #rst pseudo
+    :end-before: #rst smoothing
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: smoothing
-    :end-before: #rst: solution
+    :start-after: #rst smoothing
+    :end-before: #rst solution
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: solution
-    :end-before: #rst: run pyHyp
+    :start-after: #rst solution
+    :end-before: #rst run pyHyp
 
 Running pyHyp is quite simple, as shown below.
 After the mesh extrusion is done, we can write the volume mesh with the ``writeCGNS`` function.
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
-    :start-after: #rst: run pyHyp
+    :start-after: #rst run pyHyp
 
 Run it yourself!
 ================================================================================

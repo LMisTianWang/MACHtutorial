@@ -25,7 +25,7 @@ Copy the following files from the MACHtutorial repository:
 
     $ cp ~/hg/machtutorial/tutorial/aero/geometry/rae2822.dat .
 
-Create the following empty runscripts in the current directory:
+Create the following empty runscript in the current directory:
 
 - ``generate_geometry.py``
 
@@ -41,14 +41,14 @@ We need to import the pyGeo library in order to use its functions.
 The pyGeo library, along with all other MACH libraries, should be importable because its code is located in a directory which is exposed to the system environment variable PYTHON_PATH.
 
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
-   :start-after: #rst: Imports
-   :end-before: #rst: Airfoil file
+   :start-after: #rst Imports
+   :end-before: #rst Airfoil file
 
 Wing Definition
 ---------------
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
-   :start-after: #rst: Airfoil file
-   :end-before: #rst: Wing Definition
+   :start-after: #rst Airfoil file
+   :end-before: #rst Wing Definition
 
 The wing is lofted from a set of airfoils distributed along the span of the wing.
 The airfoil data files can be downloaded from online or generated from a variety of software.
@@ -79,14 +79,14 @@ An offset in the x-y plane can be added to this position with the ``offset`` arr
 In this case, we don't want to apply any rotation or offset.
 
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
-   :start-after: #rst: Wing definition
-   :end-before: #rst: Run pyGeo
+   :start-after: #rst Wing definition
+   :end-before: #rst Run pyGeo
 
 Call pyGeo
 ----------
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
-   :start-after: #rst: Run pyGeo
-   :end-before: #rst: Write output files
+   :start-after: #rst Run pyGeo
+   :end-before: #rst Write output files
 
 A detailed explanation of each argument is available in the `pyGeo docs <http://mdolab.engin.umich.edu/doc/packages/pygeo/doc/pyGeo.html>`_.
 The final four options stipulate a rounded wingtip and a blunt trailing edge with a square tip and a thickness of 0.25 inches.
@@ -100,7 +100,7 @@ There are three options for writing the geometry surface definition to file.
     3. Write a TIN file directly from pyGeo.
 
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
-   :start-after: #rst: Write output files
+   :start-after: #rst Write output files
 
 Run it yourself!
 ================================================================================

@@ -1,11 +1,11 @@
 
-.. centered::  
-   :ref:`Aerodynamic shape optimization <OPTIM_AERO>` | :ref:`Summary <SUMMARY>`
+.. centered::
+    :ref:`opt_struct` | :ref:`intro`
 
-.. _OPTIM_STRUCT:
+.. _opt_struct:
 
 ***********************
-Structural optimization
+Structural Optimization
 ***********************
 Content
 =======
@@ -22,14 +22,14 @@ First, you need to had argparse and pyoptsparse libraries to the file and define
 ::
 	import argparse
 	from pyoptsparse import *
-	
+
 	comm=MPI.COMM_WORLD
 
 **Then delete the code lines after "execfile(Setup_structure)" and add the code from the next sections by following the rest of the tutorial.**
 
 Objective function
 ------------------
-The main inputs for solving a structural optimization problem is quite similar to the aerodynamic problem. To define the objective function and its sensibility, you need to set first the value of the design variable for the structural problem with a call to setDesignVars. Then the FEA solver is called in order to solve the new structural problem. Once the problem solved, the objective value is return. 
+The main inputs for solving a structural optimization problem is quite similar to the aerodynamic problem. To define the objective function and its sensibility, you need to set first the value of the design variable for the structural problem with a call to setDesignVars. Then the FEA solver is called in order to solve the new structural problem. Once the problem solved, the objective value is return.
 ::
 	def obj(x):
 		'''Evaluate the objective and constraints'''
@@ -51,7 +51,7 @@ The main inputs for solving a structural optimization problem is quite similar t
 Optimization problem
 --------------------
 The optimization problem we want to solve is a mass (lc0_mass) minimization problem with a ks failure constraints (failure if maximum value is egal or above 1). The optimization option are available `here <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/api/optimization.html>`_.
-::  
+::
 	optProb = Optimization('Mass min', obj)
 	optProb.addObj('lc0_mass')
 	FEASolver.addVariablesPyOpt(optProb)
@@ -89,7 +89,5 @@ Post-processing
 ===============
 For post-processing the optimization file a tool called pyOptview.py is available. Follow the instruction on the `post-processing documentation <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/postprocessing.html>`_.
 
-.. centered:: 
-	:ref:`Aerodynamic shape optimization <OPTIM_AERO>` | :ref:`Summary <SUMMARY>`
-
-
+.. centered::
+    :ref:`opt_struct` | :ref:`intro`

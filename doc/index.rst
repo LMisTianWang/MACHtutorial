@@ -49,7 +49,7 @@ Made in the MDOlab
 * `pyWarp <https://bitbucket.org/mdolab/pywarp>`_
 * `pyLayout <https://bitbucket.org/mdolab/pylayout>`_
 * `TACS <https://bitbucket.org/mdolab/tacs>`_
-* `pyOptsparse <https://bitbucket.org/mdolab/pyoptsparse>`_
+* `pyOptsparse <https://github.com/mdolab/pyoptsparse>`_
 * `cgnsUtilities <https://bitbucket.org/mdolab/cgnsutilities>`_
 * `baseclasses <https://bitbucket.org/mdolab/baseclasses>`_
 
@@ -65,13 +65,13 @@ We invite you, especially as a new user, to take notes of the parts that you fin
 
 The *.rst files in the doc directory contain direct links to the python scripts in the tutorial directory to avoid code duplication.
 This is done using the ``start-after`` and ``end-before`` options of Sphinx's native ``literalinclude`` directive.
-We adopt the convention of using ``#rst: <section subject>`` as the marker for the start and end of each ``literalinclude`` section, like so:
+We adopt the convention of using ``#rst <section subject>`` as the marker for the start and end of each ``literalinclude`` section, like so:
 ::
-    #rst: Simple addition (begin)
+    #rst Simple addition (begin)
     a = 2
     b = 3
     c = a + b
-    #rst: Simple addition (end)
+    #rst Simple addition (end)
 
 Please adopt this same convention for any future developments to the tutorial.
 

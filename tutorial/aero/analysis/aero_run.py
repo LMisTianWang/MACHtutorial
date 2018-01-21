@@ -1,9 +1,9 @@
-#rst: Imports
+#rst Imports
 import numpy
 from adflow import ADFLOW
 from baseclasses import *
 from mpi4py import MPI
-#rst: ADflow options
+#rst ADflow options
 aeroOptions = {
     # I/O Parameters
     'gridFile':'wing_vol.cgns',
@@ -35,7 +35,7 @@ aeroOptions = {
     'L2ConvergenceCoarse':1e-2,
     'nCycles':1000,
 }
-#rst: Start ADflow
+#rst Start ADflow
 # Create solver
 CFDSolver = ADFLOW(options=aeroOptions)
 
@@ -43,7 +43,7 @@ CFDSolver = ADFLOW(options=aeroOptions)
 CFDSolver.addLiftDistribution(150, 'z')
 CFDSolver.addSlices('z', numpy.linspace(0.1, 14, 10))
 
-#rst: Create AeroProblem
+#rst Create AeroProblem
 ap = AeroProblem(name='wing',
     mach=0.82,
     altitude=10000,
@@ -52,10 +52,10 @@ ap = AeroProblem(name='wing',
     chordRef=3.25,
     evalFuncs=['cl','cd']
 )
-#rst: Run ADflow
+#rst Run ADflow
 # Solve
 CFDSolver(ap)
-#rst: Evaluate and print
+#rst Evaluate and print
 funcs = {}
 CFDSolver.evalFunctions(ap, funcs)
 # Print the evaluated functions

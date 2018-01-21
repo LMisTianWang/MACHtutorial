@@ -1,6 +1,6 @@
-#rst: Imports
+#rst Imports
 from pyhyp import pyHyp
-#rst: general
+#rst general
 options= {
     # ---------------------------
     #   General options
@@ -12,21 +12,21 @@ options= {
     'autoConnect':'True',
     'BC':{},
     'families':'wall',
-    #rst: grid
+    #rst grid
     # ---------------------------
     #   Grid Parameters
     # ---------------------------
     'N': 49,
     's0':1e-5,
     'marchDist':23.2*14,
-    #rst: pseudo
+    #rst pseudo
     # ---------------------------
     #   Pseudo Grid Parameters
     # ---------------------------
     'ps0':-1,
     'pGridRatio':-1,
     'cMax': 10.0,
-    #rst: smoothing
+    #rst smoothing
     # ---------------------------
     #   Smoothing parameters
     # ---------------------------
@@ -36,7 +36,7 @@ options= {
     'volCoef': .2,
     'volBlend': 0.0005,
     'volSmoothIter': 20,
-    #rst: solution
+    #rst solution
     # ---------------------------
     #   Solution Parameters
     # ---------------------------
@@ -44,7 +44,7 @@ options= {
     'kspMaxIts': 1500,
     'kspSubspaceSize':50
     }
-#rst: run pyHyp
+#rst run pyHyp
 hyp = pyHyp(options=options)
 hyp.run()
 hyp.writeCGNS('wing_vol.cgns')

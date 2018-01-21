@@ -1,16 +1,35 @@
 
 .. centered::
-   :ref:`Previous: Structural Analysis <Struct>` | :ref:`Summary <SUMMARY>` | :ref:`Next: FFD <OPTIM_ffd>`
+   :ref:`intro` | :ref:`opt_pyopt`
 
-.. _OPTIM:
+.. _opt_overview:
 
 ####################
-Part 3: optimization
+Part 3: Optimization
 ####################
 
-Content
-=======
-This part is based on "part 1: aerodynamic analysis" and "part 2: structure analysis". All the inputs for solving an optimization problem on the wing come from these parts.
+
+Overview
+================================================================================
+In this part of the tutorial, we will demonstrate how to optimize the design of an aircraft with gradient-based optimization algorithms.
+One of the singular attributes of the MACH framework is that it was specifically designed for the purpose of conducting gradient-based optimization studies.
+Each module was developed from the beginning with gradient-based optimization in mind to ensure that accurate gradients could be obtained efficiently.
+The naive approach to gradient-based optimization is generally to use finite difference approximations for derivatives of the functions of interest with respect to the design variables.
+There are many problems with this approach, including prohibitive computational expense and rampant inaccuracy, so as a rule, we don't touch finite difference with a ten foot pole.
+Instead, we use a combination of analytic gradients, automatic differentiation, and the complex-step method to compute accurate gradients for our optimizations.
+We have spent a great deal of effort to make optimization a fairly straightforward and seamless process for the end user, so we hope you enjoy learning to use our tools!
+
+Here are a few of the items we will cover in the following pages:
+
+    - Set up an optimization script using pyOptSparse
+
+    - Parametrize a 3D geometry using the Free-form Deformation method
+
+    - Run single-point and multi-point aerodynamic shape optimizations
+
+    - Minimize the mass of a wingbox structure subject to critical load constraints
+
+    - Conduct multidisciplinary optimization of a wing considering both aerodynamics and structures
 
 Table of Contents
 ================================================================================
@@ -18,36 +37,27 @@ Table of Contents
 .. toctree::
    :maxdepth: 1
 
+   opt_pyopt
    opt_ffd
    opt_aero
    opt_struct
+   opt_aerostruct
 
-Aerodynamic Shape Optimization Tutorial
-=======================================
-For the aerodynamic shape optimization, we used the same inputs than for part 1, ADflow. We only adapt the rans.py file by adding the optimizer functions.
+Directory Structure
+================================================================================
+::
 
-Example of problem to solve
----------------------------
-For a given aerodynamic configuration and lift, find the geometry which minimizes the drag.
-
-Structural Shape Optimization Tutorial
-======================================
-For the structural shape optimization, we used the same inputs than with TACS. Again, only the struct_run  changes. We add the optimizer functions.
-
-Example of problem to solve
----------------------------
-For a given topology, find the lightest truss that can carry a given load.
-
-Preliminary work
-=================
-Create inside the TUTORIAL directory the next directory and sub-directories:
-
-* OPTIM
-	* FFD
-	* OPT_AERO
-	* OPT_STRUC
-
-
+    opt
+    |-- pyoptsparse
+    |   |-- rae2822.py
+    |   |-- generate_wing.py
+    |-- ffd
+    |   |-- volume
+    |-- aero
+    |   |-- output
+    |   |-- aero_opt.py
+    |-- struct
+    |-- aerostruct
 
 .. centered::
-   ref:`Previous: Structural Analysis <Struct>` | :ref:`Summary <SUMMARY>` | :ref:`Next: FFD <OPTIM_ffd>`
+    :ref:`intro` | :ref:`opt_pyopt`
