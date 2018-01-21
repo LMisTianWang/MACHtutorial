@@ -43,5 +43,5 @@ optOptions = {}
 opt = OPT(args.opt, options=optOptions)
 
 #rst Solve
-sol = opt(optProb, sens=userfuncsens, storeHistory='opt.hist')
+sol = opt(optProb, sens=userfuncsens, storeHistory='opt.hst')
 print(sol)

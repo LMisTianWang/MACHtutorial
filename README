@@ -17,4 +17,4 @@ Run ``firefox _build/html/index.html`` or ``google-chrome _build/html/index.html
 
 Required Packages to build
 --------------------------
-Sphinx (1.6.3)
+Sphinx (1.6.6)
