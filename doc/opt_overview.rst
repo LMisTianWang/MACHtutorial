@@ -50,12 +50,13 @@ Directory Structure
 
     opt
     |-- pyoptsparse
-    |   |-- rae2822.py
-    |   |-- generate_wing.py
+    |   |-- rosenbrock.py
     |-- ffd
-    |   |-- volume
+    |   |-- simple_ffd.py
+    |   |-- parametrize.py
+    |-- mesh_warping
+    |   |-- warp_mesh.py
     |-- aero
-    |   |-- output
     |   |-- aero_opt.py
     |-- struct
     |-- aerostruct

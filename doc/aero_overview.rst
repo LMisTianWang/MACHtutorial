@@ -53,7 +53,6 @@ Directory Structure
     |   |-- volume
     |       |-- extrude.py
     |-- analysis
-        |-- output
         |-- aero_run.py
 
 .. centered::
