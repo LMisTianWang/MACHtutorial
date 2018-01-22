@@ -43,6 +43,31 @@ I will explain briefly how it works, but I won't give it the same attention as t
 
 Open the script ``simple_ffd.py`` in your favorite text editor.
 
+Specify bounds of FFD volume
+----------------------------
+We need to define the dimensions of the grid at the root and the tip, and the script will interpolate between them to obtain the full 3D grid.
+We also need to specify the number of control points we want along each dimension of the FFD grid.
+
+.. literalinclude:: ../tutorial/opt/ffd/simple_ffd.py
+    :start-after: #rst Dimensions
+    :end-before: #rst Compute
+
+Compute FFD nodes
+-----------------
+This next section just computes the nodes of the FFD grid based on the information we have provided.
+The vector ``span_dist`` gives the spanwise distribution of the FFD sections, which can be varied based by the user.
+Here we use a distribution that varies from wider spacing at the root to narrower spacing at the tip.
+
+.. literalinclude:: ../tutorial/opt/ffd/simple_ffd.py
+    :start-after: #rst Compute
+    :end-before: #rst Write
+
+Write to file
+-------------
+Finally we write to file, using the plot3d format.
+
+.. literalinclude:: ../tutorial/opt/ffd/simple_ffd.py
+    :start-after: #rst Write
 
 Setting up a geometric parametrization with DVGeometry
 ================================================================================

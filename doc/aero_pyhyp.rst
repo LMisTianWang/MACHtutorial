@@ -27,7 +27,7 @@ Create the following empty runscript in the current directory:
 
 - ``run_pyhyp.py``
 
-Dissecting the pyOptSparse runscript
+Dissecting the pyHyp runscript
 ================================================================================
 Open the file ``run_pyhyp.py`` with your favorite text editor.
 Then copy the code from each of the following sections into this file.

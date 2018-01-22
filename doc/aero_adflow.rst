@@ -45,8 +45,8 @@ In this case we will be using the AeroProblem, which is a container for the flow
 Finally, it is convenient to import the mpi4py library to prevent printing multiple times if we are running on multiple processors.
 Importing mpi4py is not entirely necessary in the runscript because ADflow does it internally if necessary.
 
-Set up ADflow
--------------
+ADflow options
+--------------
 .. literalinclude:: ../tutorial/aero/analysis/aero_run.py
    :start-after: #rst ADflow options
    :end-before: #rst Start ADflow
@@ -54,7 +54,7 @@ Set up ADflow
 An exhaustive list of the ADflow options and their descriptions can be found in the docs.
 For our purposes here, I will go over them briefly.
 The `I/O Parameters` include the mesh file, the output directory, and the variables that will be printed as the solver runs.
-Under `Solver Parameters`, you can choose a basic solver (`dadi` or `runge kutta`) and set the CFL and multigrid parameters.
+Under `Solver Parameters`, you can choose a basic solver (DADI or Runge Kutta) and set the CFL and multigrid parameters.
 Additionally, the Approximate Newton-Krylov (ANK) and Newton-Krylov (NK) solvers can be used to speed up convergence of the solver.
 Finally, we can terminate the solver based on relative convergence of the norm of the residuals or maximum number of iterations.
 
