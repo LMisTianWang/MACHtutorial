@@ -1,39 +1,32 @@
 
 .. centered::
-   :ref:`Previous: step 1 <Struct_step1>` | :ref:`Summary <SUMMARY>` | :ref:`Next: step 2 <Struct_step2>`
+   :ref:`struct_overview` | :ref:`struct_mesh`
 
+.. _struct_geo:
 
-.. _BDF:
+****************
+Wingbox Geometry
+****************
 
-***
-BDF
-***
+Introduction
+================================================================================
+
+Files
+================================================================================
+Navigate to the directory ``aero/geometry`` in your tutorial folder.
+Copy the following files from the MACHtutorial repository:
+::
+
+    $ cp ~/hg/machtutorial/tutorial/aero/geometry/rae2822.dat .
+
+Create the following empty runscript in the current directory:
+
+- ``generate_geometry.py``
 
 Content
 =======
 A BDF is a standard input file used by Nastran the structural finite element solver developed by NASA. The BDF can be generated with most commercial meshing software like ICEM. It contains a mesh (nodes, edges, elements) of a structure. Therefore, in order to used pyTACS toolbox based on Nastran solver for analyzing the structural geometry, we need to generate a BDF. Here, we will describe how to generate the structural wing and its mesh.
 
-Aerodynamic vs structural geometry
-==================================
-A comparison of the aerodynamic wing and the structural wing of the ”MDO tutorial wing” case is presented on Figure 1a & 1b. The cut made at Z=1 of both wing and displayed on Figure 1b show the common surfaces and how the structural wing fit inside the aerodynamic wing.
-
-.. figure:: Pic/Struc/Bdf/figure1a.png
-   :width: 600px
-   :align: center
-   :height: 300px
-   :alt: alternate text
-   :figclass: align-center
-
-   Figure 1a: 3d comparison of the aerodynamic wing geometry and the structural wing geometry (or box).
-
-.. figure:: Pic/Struc/Bdf/figure1b.png
-   :width: 600px
-   :align: center
-   :height: 300px
-   :alt: alternate text
-   :figclass: align-center
-
-   Figure 1b: comparison cut made at Z=1 of the aerodynamic wing and the structural wing
 
 pyGeo
 =====
@@ -337,4 +330,4 @@ Write input:
    Figure 10: output options for the Nastran solver.
 
 .. centered::
-   :ref:`Previous: step 1 <Struct_step1>` | :ref:`Summary <SUMMARY>` | :ref:`Next: step 2 <Struct_step2>`
+    :ref:`struct_overview` | :ref:`struct_mesh`

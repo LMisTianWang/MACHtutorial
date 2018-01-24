@@ -1,9 +1,8 @@
 
 .. centered::
-   :ref:`Previous: step 2 <Struct_step2>` | :ref:`Summary <SUMMARY>` | :ref:`Next: step 4 <Struct_step4>`
+   :ref:`struct_load` | :ref:`intro`
 
-
-.. _Step3-chapt:
+.. _struct_tacs:
 
 ***************
 Structure setup
@@ -166,4 +165,4 @@ The KS Failure functions is used to determine if the structure of the wing will 
 
 
 .. centered::
-   :ref:`Previous: step 2 <Struct_step2>` | :ref:`Summary <SUMMARY>` | :ref:`Next: step 4 <Struct_step4>`
+    :ref:`struct_load` | :ref:`intro`
