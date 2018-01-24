@@ -2,6 +2,18 @@
 #         Import modules
 # ======================================================================
 import numpy
+import argparse
+from mpi4py import MPI
+from baseclasses import *
+from tacs import *
+from repostate import *
+from pyoptsparse import *
+
+
+# ======================================================================
+#         Import modules
+# ======================================================================
+import numpy
 from mpi4py import MPI
 from baseclasses import *
 from tacs import *
@@ -10,7 +22,7 @@ from repostate import *
 # ================================================================
 #       Define load case with StructProblem
 # ================================================================
-sp = StructProblem('lc0', loadFile='../loading/forces.txt', loadFactor=2.5,
+sp = StructProblem('lc0', loadFile='../../struct/loading/forces.txt', loadFactor=2.5,
                      evalFuncs=['mass','ks0', 'ks1', 'ks2'])
 
 # ================================================================
@@ -19,9 +31,8 @@ sp = StructProblem('lc0', loadFile='../loading/forces.txt', loadFactor=2.5,
 structOptions = {
      'transferGaussOrder':3,
      'gravityVector':[0, -9.81, 0],
-     'FamilySeparator':'..',
 }
-bdfFile = '../meshing/wingbox.bdf'
+bdfFile = '../../struct/meshing/wingbox.bdf'
 FEASolver = pytacs.pyTACS(bdfFile, options=structOptions)
 
 # ================================================================
@@ -116,32 +127,43 @@ ks1 = FEASolver.addFunction('ks1', functions.AverageKSFailure,  KSWeight=KSWeigh
 ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight,
                             include=['L_SKING','L_STRING'], loadFactor=safetyFactor)
 
-FEASolver.addFunction('max0', functions.MaxFailure, include=ks0, loadFactor=safetyFactor)
-FEASolver.addFunction('max1', functions.MaxFailure, include=ks1, loadFactor=safetyFactor)
-FEASolver.addFunction('max2', functions.MaxFailure, include=ks2, loadFactor=safetyFactor)
-
 # ================================================================
 #       Add loads
 # ================================================================
-# Different ways of setting loads
-F = numpy.array([0.0, 3E5, 0.0]) #N
-pt = numpy.array([8.0208, -0.0885, 14.000])
-# add point load to wing tip
-#FEASolver.addPointLoads(sp, pt, F)
-# add distributed load to tip rib
-#FEASolver.addLoadToComponents(sp, FEASolver.selectCompIDs(['RIB.18']), F=F)
-# add pressure load (100 kPa) to upper skin of the wing
-#FEASolver.addPressureLoad(sp, 100E3, include='U_SKIN')
-# add inertial (gravity) loads
 FEASolver.addInertialLoad(sp)
 
 # ================================================================
-#       Evaluate functions
+#       Set up optimization
 # ================================================================
-funcs = {}
-FEASolver(sp)
-FEASolver.evalFunctions(sp, funcs)
-print funcs
+def obj(x):
+    funcs = {}
+    FEASolver.setDesignVars(x)
+    FEASolver(sp)
+    FEASolver.evalFunctions(sp, funcs)
+    if MPI.COMM_WORLD.rank == 0:
+        print funcs
+    return funcs
 
-# Write the solution
-FEASolver.writeOutputFile('output.f5')
+def sens(x, funcs):
+    funcsSens = {}
+    FEASolver.evalFunctionsSens(sp, funcsSens)
+    return funcsSens
+
+# Set up the optimization problem
+optProb = Optimization('Mass minimization', obj)
+optProb.addObj('lc0_mass')
+FEASolver.addVariablesPyOpt(optProb)
+
+for i in range(3):
+    optProb.addCon('%s_ks%d'% (sp.name, i), upper=1.0)
+
+if comm.rank == 0:
+    print optProb
+optProb.printSparsity()
+
+optOptions = {}
+opt = OPT('snopt', options=optOptions)
+sol = opt(optProb, sens=sens, storeHistory='struct.hst')
+
+# Write the final solution
+FEASolver.writeOutputFile('final.f5')
