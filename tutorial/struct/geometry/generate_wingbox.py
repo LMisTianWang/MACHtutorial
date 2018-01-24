@@ -92,7 +92,7 @@ layout = pyLayout.Layout(geo, teEdgeList,
                          )
 
 # Generate bdf file by calling 'finalize'
-layout.finalize('mdo_tutorial.bdf')
+layout.finalize('wingbox.bdf')
 
 # Also write a tecplot file so we can look at higher order models:
-layout.writeTecplot('mdo_tutorial.dat')
+layout.writeTecplot('wingbox.dat')
