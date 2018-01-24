@@ -12,7 +12,7 @@ from repostate import *
 # ================================================================
 
 outputDirectory =  './'
-bdfFile = '../meshing/mdo_tutorial.bdf'
+bdfFile = '../meshing/wingbox.bdf'
 gcomm = comm = MPI.COMM_WORLD
 
 # ================================================================
