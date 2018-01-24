@@ -157,7 +157,7 @@ FEASolver.addVariablesPyOpt(optProb)
 for i in range(3):
     optProb.addCon('%s_ks%d'% (sp.name, i), upper=1.0)
 
-if comm.rank == 0:
+if MPI.COMM_WORLD.rank == 0:
     print optProb
 optProb.printSparsity()
 
