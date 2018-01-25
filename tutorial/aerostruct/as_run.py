@@ -144,7 +144,9 @@ if flags[aeroID]:
     execfile('INPUT/setup_constraints.py')
 
 # Create the final aerostructural solver
-AS = AeroStruct(CFDSolver, FEASolver, gcomm, options=mdOptions)
+transferOptions = {}
+transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
+AS = AeroStruct(CFDSolver, FEASolver, transfer, gcomm, options=mdOptions)
 
 # Solve each aero Problem
 funcs = {}
