@@ -26,13 +26,10 @@ args = parser.parse_args()
 outputDirectory = args.output
 saveRepositoryInfo(outputDirectory)
 
-gridFile = 'rans_grid_l2.cgns'
-FFDFile = 'mdo_tutorial_ffd.fmt'
-bdfFile = 'mdo_tutorial.bdf'
-nTwist = 6
+gridFile = 'wing_vol.cgns'
+FFDFile = 'ffd.xyz'
+bdfFile = 'wingbox.bdf'
 gcomm = MPI.COMM_WORLD
-loadFactor = 2.5
-KSWeight = 80.0
 
 # Set Processor group sizes
 npStruct = 1

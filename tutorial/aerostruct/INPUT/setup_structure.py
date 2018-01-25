@@ -1,49 +1,35 @@
-# ---------------------------------------------------
-# Setup Structural problem
-# ---------------------------------------------------
-# Material properties
-rho_2024 = 2780
-E_2024 = 73.1e9
-ys_2024 = 324e6
-nu = 0.33
-t = .02
-tMin = 0.0016 # 1/16"
-tMax = 0.020
-kcorr = 5.0/6.0
-FEASolver = pytacs.pyTACS(bdfFile, comm=comm, options=structOptions)
+# ================================================================
+#       Setup structural solver
+# ================================================================
+FEASolver = pytacs.pyTACS(bdfFile, options=structOptions)
 
-#-----------------------------
-# Ribs
-# ----------------------------
+# ================================================================
+#       Set up DV Groups
+# ================================================================
+# Ribs (19 total ribs)
 for i in xrange(19):
     FEASolver.addDVGroup('RIBS', include='RIB.%2.2d'%i)
 
-#-----------------------------
-# Spars
-# ----------------------------
-FEASolver.addDVGroup('SPARS', include='SPAR.00', nGroup=9)
-FEASolver.addDVGroup('SPARS', include='SPAR.09', nGroup=9)
+# Spars (each with 9 spanwise sections)
+FEASolver.addDVGroup('SPARS', include='SPAR.00', nGroup=9)  # front spar
+FEASolver.addDVGroup('SPARS', include='SPAR.09', nGroup=9)  # rear spar
 
-#-----------------------------
-# Stringers
-# ----------------------------
-groups = [['L_STRING.01', 'L_STRING.02', 'L_STRING.03'], 
-          ['L_STRING.04', 'L_STRING.05'],
-          ['L_STRING.06', 'L_STRING.07', 'L_STRING.08']]
+# Stringers (each with 18 spanwise sections)
+groups = [['L_STRING.01', 'L_STRING.02', 'L_STRING.03'],    # front 3
+          ['L_STRING.04', 'L_STRING.05'],                   # middle 2
+          ['L_STRING.06', 'L_STRING.07', 'L_STRING.08']]    # rear 3
 
-for group in groups:          
+for group in groups:
     FEASolver.addDVGroup('STRINGERS', include=group, nGroup=9)
 
-groups = [['U_STRING.01', 'U_STRING.02', 'U_STRING.03'], 
+groups = [['U_STRING.01', 'U_STRING.02', 'U_STRING.03'],
           ['U_STRING.04', 'U_STRING.05'],
           ['U_STRING.06', 'U_STRING.07', 'U_STRING.08']]
 
-for group in groups:          
+for group in groups:
     FEASolver.addDVGroup('STRINGERS', include=group, nGroup=9)
 
-#-----------------------------
-# Skins
-# ----------------------------
+# Skins (group skins in sections split by every other rib)
 boundLists = [
     ['SPAR.00','SPAR.09','RIB.02','RIB.04'],
     ['SPAR.00','SPAR.09','RIB.04','RIB.06'],
@@ -68,15 +54,31 @@ for i in xrange(1,19):
 FEASolver.addDVGroup('U_SKIN', include=u_skins)
 FEASolver.addDVGroup('L_SKIN', include=l_skins)
 
+# ================================================================
+#       Set-up constitutive properties for each DVGroup
+# ================================================================
 def conCallBack(dvNum, compDescripts, userDescript, specialDVs, **kargs):
+    rho_2024 = 2780 #kg/m^3
+    E_2024 = 73.1e9 #Pa
+    ys_2024 = 324e6 #Pa
+    nu = 0.33
+    t = .02 #m
+    tMin = 0.0016 # 1/16"
+    tMax = 0.020 #m
+    kcorr = 5.0/6.0
     con = constitutive.isoFSDTStiffness(rho_2024, E_2024, nu, kcorr,
                                         ys_2024, t, dvNum, tMin, tMax)
     scale = [100.0]
     return con, scale
 
 FEASolver.createTACSAssembler(conCallBack)
-
-# --------------- Add Functions -------------------------
+# Write output file to visualize design variable groups
+FEASolver.writeDVVisualization('DV_groups.f5')
+# ================================================================
+#       Add functions
+# ================================================================
+safetyFactor = 1.5
+KSWeight = 80.0
 # Mass Functions
 FEASolver.addFunction('mass', functions.StructuralMass)
 FEASolver.addFunction('uSkin', functions.StructuralMass, include='U_SKIN')
@@ -85,14 +87,15 @@ FEASolver.addFunction('leSpar', functions.StructuralMass, include=['SPAR.00'])
 FEASolver.addFunction('teSpar', functions.StructuralMass, include=['SPAR.09'])
 FEASolver.addFunction('ribs', functions.StructuralMass, include=['RIBS'])
 
-# KS Functions
+# KS Failure Functions
 ks0 = FEASolver.addFunction('ks0', functions.AverageKSFailure, KSWeight=KSWeight,
-                            include=['RIBS','SPARS'], loadFactor=loadFactor)
+                            include=['RIBS','SPARS'], loadFactor=safetyFactor)
 ks1 = FEASolver.addFunction('ks1', functions.AverageKSFailure,  KSWeight=KSWeight,
-                            include=['U_SKIN','U_STRING'], loadFactor=loadFactor)
+                            include=['U_SKIN','U_STRING'], loadFactor=safetyFactor)
 ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight,
-                            include=['L_SKING','L_STRING'], loadFactor=loadFactor)
+                            include=['L_SKIN','L_STRING'], loadFactor=safetyFactor)
 
-FEASolver.addFunction('max0',functions.MaxFailure, include=ks0, loadFactor=loadFactor)
-FEASolver.addFunction('max1',functions.MaxFailure, include=ks1, loadFactor=loadFactor)
-FEASolver.addFunction('max2',functions.MaxFailure, include=ks2, loadFactor=loadFactor)
+# ================================================================
+#       Add loads
+# ================================================================
+FEASolver.addInertialLoad(sp)
