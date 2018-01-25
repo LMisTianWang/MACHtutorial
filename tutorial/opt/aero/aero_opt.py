@@ -81,7 +81,7 @@ ap.addDV('alpha', value=1.5, lower=0, upper=10.0, scale=1.0)
 #         Geometric Design Variable Set-up
 # ======================================================================
 # Create DVGeometry object
-FFDFile = 'mdo_tutorial_ffd.fmt'
+FFDFile = 'wing.xyz'
 DVGeo = DVGeometry(FFDFile)
 
 # Create reference axis
@@ -103,12 +103,34 @@ DVGeo.addGeoDVLocal('local', lower=-0.5, upper=0.5, axis='y', scale=1)
 CFDSolver.setDVGeo(DVGeo)
 
 # ======================================================================
+#         DVConstraint Setup
+# ======================================================================
+DVCon = DVConstraints()
+DVCon.setDVGeo(DVGeo)
+
+# Only ADflow has the getTriangulatedSurface Function
+DVCon.setSurface(CFDSolver.getTriangulatedMeshSurface())
+
+# Le/Te constraints
+DVCon.addLeTeConstraints(0, 'iLow')
+DVCon.addLeTeConstraints(0, 'iHigh')
+
+# Volume constraints
+leList = [[0.1, 0, 0.001], [0.1+7.5, 0, 14]]
+teList = [[4.2, 0, 0.001], [8.5, 0, 14]]
+DVCon.addVolumeConstraint(leList, teList, 20, 20, lower=1.0)
+
+# Thickness constraints
+DVCon.addThicknessConstraints2D(leList, teList, 10, 10, lower=1.0)
+
+if MPI.COMM_WORLD.rank == 0:
+    DVCon.writeTecplot('constraints.dat')
+
+# ======================================================================
 #         Mesh Warping Set-up
 # ======================================================================
 meshOptions = {'gridFile':gridFile, 'warpType':'algebraic',}
 mesh = MBMesh(options=meshOptions, comm=comm)
-
-# Add mesh warping object to CFD solver
 CFDSolver.setMesh(mesh)
 
 # ======================================================================
@@ -119,6 +141,7 @@ def cruiseFuncs(x):
         print x
     funcs = {}
     DVGeo.setDesignVars(x)
+    DVCon.evalFunctions(funcs)
     ap.setDesignVars(x)
     CFDSolver(ap)
     CFDSolver.evalFunctions(ap, funcs)
@@ -129,6 +152,7 @@ def cruiseFuncs(x):
 
 def cruiseFuncsSens(x, funcs):
     funcsSens = {}
+    DVCon.evalFunctionsSens(funcsSens)
     CFDSolver.evalFunctionsSens(ap, funcsSens)
     if MPI.COMM_WORLD.rank == 0:
         print funcsSens
@@ -159,6 +183,7 @@ DVGeo.addVariablesPyOpt(optProb)
 
 # Add constraints
 optProb.addCon('cl_con_'+ap.name, lower=0.0, upper=0.0, scale=1.0)
+DVCon.addConstraintsPyOpt(optProb)
 
 # The MP object needs the 'obj' and 'sens' function for each proc set,
 # the optimization problem and what the objcon function is:

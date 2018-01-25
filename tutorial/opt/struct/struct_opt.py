@@ -9,16 +9,6 @@ from tacs import *
 from repostate import *
 from pyoptsparse import *
 
-
-# ======================================================================
-#         Import modules
-# ======================================================================
-import numpy
-from mpi4py import MPI
-from baseclasses import *
-from tacs import *
-from repostate import *
-
 # ================================================================
 #       Define load case with StructProblem
 # ================================================================
@@ -109,7 +99,7 @@ FEASolver.writeDVVisualization('DV_groups.f5')
 # ================================================================
 #       Add functions
 # ================================================================
-safetyFactor = 2.5
+safetyFactor = 1.5
 KSWeight = 80.0
 # Mass Functions
 FEASolver.addFunction('mass', functions.StructuralMass)
@@ -125,7 +115,7 @@ ks0 = FEASolver.addFunction('ks0', functions.AverageKSFailure, KSWeight=KSWeight
 ks1 = FEASolver.addFunction('ks1', functions.AverageKSFailure,  KSWeight=KSWeight,
                             include=['U_SKIN','U_STRING'], loadFactor=safetyFactor)
 ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight,
-                            include=['L_SKING','L_STRING'], loadFactor=safetyFactor)
+                            include=['L_SKIN','L_STRING'], loadFactor=safetyFactor)
 
 # ================================================================
 #       Add loads

@@ -19,7 +19,6 @@ sp = StructProblem('lc0', loadFile='../loading/forces.txt', loadFactor=2.5,
 structOptions = {
      'transferGaussOrder':3,
      'gravityVector':[0, -9.81, 0],
-     'FamilySeparator':'..',
 }
 bdfFile = '../meshing/wingbox.bdf'
 FEASolver = pytacs.pyTACS(bdfFile, options=structOptions)
@@ -98,7 +97,7 @@ FEASolver.writeDVVisualization('DV_groups.f5')
 # ================================================================
 #       Add functions
 # ================================================================
-safetyFactor = 2.5
+safetyFactor = 1.5
 KSWeight = 80.0
 # Mass Functions
 FEASolver.addFunction('mass', functions.StructuralMass)
@@ -114,25 +113,11 @@ ks0 = FEASolver.addFunction('ks0', functions.AverageKSFailure, KSWeight=KSWeight
 ks1 = FEASolver.addFunction('ks1', functions.AverageKSFailure,  KSWeight=KSWeight,
                             include=['U_SKIN','U_STRING'], loadFactor=safetyFactor)
 ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight,
-                            include=['L_SKING','L_STRING'], loadFactor=safetyFactor)
-
-FEASolver.addFunction('max0', functions.MaxFailure, include=ks0, loadFactor=safetyFactor)
-FEASolver.addFunction('max1', functions.MaxFailure, include=ks1, loadFactor=safetyFactor)
-FEASolver.addFunction('max2', functions.MaxFailure, include=ks2, loadFactor=safetyFactor)
+                            include=['L_SKIN','L_STRING'], loadFactor=safetyFactor)
 
 # ================================================================
 #       Add loads
 # ================================================================
-# Different ways of setting loads
-F = numpy.array([0.0, 3E5, 0.0]) #N
-pt = numpy.array([8.0208, -0.0885, 14.000])
-# add point load to wing tip
-#FEASolver.addPointLoads(sp, pt, F)
-# add distributed load to tip rib
-#FEASolver.addLoadToComponents(sp, FEASolver.selectCompIDs(['RIB.18']), F=F)
-# add pressure load (100 kPa) to upper skin of the wing
-#FEASolver.addPressureLoad(sp, 100E3, include='U_SKIN')
-# add inertial (gravity) loads
 FEASolver.addInertialLoad(sp)
 
 # ================================================================
