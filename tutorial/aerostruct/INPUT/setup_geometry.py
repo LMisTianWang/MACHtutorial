@@ -19,6 +19,3 @@ DVGeo.addGeoDVGlobal(dvName='twist', value=[0]*nTwist, func=twist,
 if args.shape:
     # Set up local design variables
     DVGeo.addGeoDVLocal('local', lower=-0.5, upper=0.5, axis='y', scale=1)
-
-# Add DVGeo object to CFD solver
-CFDSolver.setDVGeo(DVGeo)

@@ -1,6 +1,6 @@
 
 .. centered::
-    :ref:`opt_struct` | :ref:`intro`
+    :ref:`opt_struct` | :ref:`opt_aerostruct`
 
 .. _opt_struct:
 
@@ -90,4 +90,4 @@ Post-processing
 For post-processing the optimization file a tool called pyOptview.py is available. Follow the instruction on the `post-processing documentation <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/postprocessing.html>`_.
 
 .. centered::
-    :ref:`opt_struct` | :ref:`intro`
+    :ref:`opt_struct` | :ref:`opt_aerostruct`

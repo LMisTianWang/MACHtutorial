@@ -25,7 +25,7 @@ options= {
     # ---------------------------
     'ps0':-1,
     'pGridRatio':-1,
-    'cMax': 10.0,
+    'cMax': 1.0,
     #rst smoothing
     # ---------------------------
     #   Smoothing parameters
