@@ -1,6 +1,7 @@
 # ======================================================================
 #         Import modules
 # ======================================================================
+#rst Imports (beg)
 import numpy
 from mpi4py import MPI
 from baseclasses import *
@@ -11,27 +12,22 @@ from repostate import *
 from pyoptsparse import Optimization, OPT
 from pywarp import *
 from multipoint import *
-
-# ======================================================================
-#         Files/Directories
-# ======================================================================
-gridFile = 'wing_vol.cgns'
-outputDirectory = './output/'
-
+#rst Imports (end)
 # ======================================================================
 #         Create multipoint communication object
 # ======================================================================
+#rst multipoint (beg)
 MP = multiPointSparse(MPI.COMM_WORLD)
 MP.addProcessorSet('cruise', nMembers=1, memberSizes=4)
 comm, setComm, setFlags, groupFlags, ptID = MP.createCommunicators()
-
+#rst multipoint (end)
 # ======================================================================
 #         ADflow Set-up
 # ======================================================================
-
+#rst adflow (beg)
 aeroOptions = {
     # I/O Parameters
-    'gridFile':gridFile,
+    'gridFile':'wing_vol.cgns',
     'outputDirectory':'output',
     'monitorvariables':['resrho','cl','cd'],
     'writeTecplotSurfaceSolution':True,
@@ -67,21 +63,23 @@ aeroOptions = {
 # Create solver
 CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
 CFDSolver.addLiftDistribution(200, 'z')
-
+#rst adflow (end)
 # ======================================================================
 #         Set up flow conditions with AeroProblem
 # ======================================================================
+#rst aeroproblem (beg)
 ap = AeroProblem(name='fc', alpha=1.5, mach=0.82, altitude=10000,
                  areaRef=45.5, chordRef=3.25, evalFuncs=['cl','cd'])
 
 # Add angle of attack variable
 ap.addDV('alpha', value=1.5, lower=0, upper=10.0, scale=1.0)
-
+#rst aeroproblem (end)
 # ======================================================================
 #         Geometric Design Variable Set-up
 # ======================================================================
+#rst dvgeo (beg)
 # Create DVGeometry object
-FFDFile = 'wing.xyz'
+FFDFile = 'ffd.xyz'
 DVGeo = DVGeometry(FFDFile)
 
 # Create reference axis
@@ -101,19 +99,16 @@ DVGeo.addGeoDVLocal('local', lower=-0.5, upper=0.5, axis='y', scale=1)
 
 # Add DVGeo object to CFD solver
 CFDSolver.setDVGeo(DVGeo)
-
+#rst dvgeo (end)
 # ======================================================================
 #         DVConstraint Setup
 # ======================================================================
+#rst dvcon (beg)
 DVCon = DVConstraints()
 DVCon.setDVGeo(DVGeo)
 
 # Only ADflow has the getTriangulatedSurface Function
 DVCon.setSurface(CFDSolver.getTriangulatedMeshSurface())
-
-# Le/Te constraints
-DVCon.addLeTeConstraints(0, 'iLow')
-DVCon.addLeTeConstraints(0, 'iHigh')
 
 # Volume constraints
 leList = [[0.1, 0, 0.001], [0.1+7.5, 0, 14]]
@@ -123,27 +118,36 @@ DVCon.addVolumeConstraint(leList, teList, 20, 20, lower=1.0)
 # Thickness constraints
 DVCon.addThicknessConstraints2D(leList, teList, 10, 10, lower=1.0)
 
+# Le/Te constraints
+DVCon.addLeTeConstraints(0, 'iLow')
+DVCon.addLeTeConstraints(0, 'iHigh')
+
 if MPI.COMM_WORLD.rank == 0:
     DVCon.writeTecplot('constraints.dat')
-
+#rst dvcon (end)
 # ======================================================================
 #         Mesh Warping Set-up
 # ======================================================================
-meshOptions = {'gridFile':gridFile, 'warpType':'algebraic',}
+#rst warp (beg)
+meshOptions = {'gridFile':'wing_vol.cgns', 'warpType':'algebraic',}
 mesh = MBMesh(options=meshOptions, comm=comm)
 CFDSolver.setMesh(mesh)
-
+#rst warp (end)
 # ======================================================================
 #         Functions:
 # ======================================================================
+#rst funcs (beg)
 def cruiseFuncs(x):
     if MPI.COMM_WORLD.rank == 0:
         print x
-    funcs = {}
+    # Set design vars
     DVGeo.setDesignVars(x)
-    DVCon.evalFunctions(funcs)
     ap.setDesignVars(x)
+    # Run CFD
     CFDSolver(ap)
+    # Evaluate functions
+    funcs = {}
+    DVCon.evalFunctions(funcs)
     CFDSolver.evalFunctions(ap, funcs)
     CFDSolver.checkSolutionFailure(ap, funcs)
     if MPI.COMM_WORLD.rank == 0:
@@ -165,25 +169,26 @@ def objCon(funcs, printOK):
     if printOK:
        print 'funcs in obj:', funcs
     return funcs
-
+#rst funcs (end)
 # ======================================================================
 #         Optimization Problem Set-up
 # ======================================================================
+#rst optprob (beg)
 # Create optimization problem
 optProb = Optimization('opt', MP.obj, comm=MPI.COMM_WORLD)
 
 # Add objective
 optProb.addObj('obj', scale=1e4)
 
-# Add variables from each AeroProblem
+# Add variables from the AeroProblem
 ap.addVariablesPyOpt(optProb)
 
 # Add DVGeo variables
 DVGeo.addVariablesPyOpt(optProb)
 
 # Add constraints
-optProb.addCon('cl_con_'+ap.name, lower=0.0, upper=0.0, scale=1.0)
 DVCon.addConstraintsPyOpt(optProb)
+optProb.addCon('cl_con_'+ap.name, lower=0.0, upper=0.0, scale=1.0)
 
 # The MP object needs the 'obj' and 'sens' function for each proc set,
 # the optimization problem and what the objcon function is:
@@ -192,7 +197,8 @@ MP.setProcSetSensFunc('cruise', cruiseFuncsSens)
 MP.setObjCon(objCon)
 MP.setOptProb(optProb)
 optProb.printSparsity()
-
+#rst optprob (end)
+#rst optimizer
 # Set up optimizer
 optOptions = {
     'Major iterations limit':200,

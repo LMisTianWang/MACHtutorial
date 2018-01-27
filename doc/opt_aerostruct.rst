@@ -1,6 +1,6 @@
 
 .. centered::
-    :ref:`opt_struct` | :ref:'intro`
+    :ref:`opt_struct` | :ref:`intro`
 
 .. _opt_aerostruct:
 
