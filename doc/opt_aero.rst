@@ -190,9 +190,7 @@ To run the script, use the ``mpirun`` and place the total number of processors a
 
     $ mpirun -np 4 python aero_opt.py
 
-Post-processing
-================================================================================
-For post-processing the optimization file a tool called pyOptview.py is available. Follow the instruction on the `post-processing documentation <http://mdolab.engin.umich.edu/doc/packages/pyoptsparse/doc/postprocessing.html>`_.
+You can follow the progress of the optimization using OptView, as explained in :ref:`opt_pyopt`.
 
 .. centered::
     :ref:`opt_ffd` | :ref:`opt_struct`
