@@ -18,11 +18,14 @@ from repostate import *
 #         Input Information
 # ======================================================================
 parser = argparse.ArgumentParser()
+parser.add_argument("--mdSolver", help="GS or NK. AS solver",
+                   type=str, default='GS')
 parser.add_argument("--output", help='Output directory', type=str,
                     default='./')
 parser.add_argument("--shape", help='Use shape variables', type=int,
                     default=0)
 args = parser.parse_args()
+
 outputDirectory = args.output
 saveRepositoryInfo(outputDirectory)
 
@@ -30,6 +33,8 @@ gridFile = 'wing_vol.cgns'
 FFDFile = 'ffd.xyz'
 bdfFile = 'wingbox.bdf'
 gcomm = MPI.COMM_WORLD
+loadFactor = 2.5
+KSWeight = 80.0
 
 # Set Processor group sizes
 npStruct = 1
@@ -45,8 +50,7 @@ asp = AeroStructProblem(ap, sp)
 
 # Setup all options
 structOptions = {
-    'transferDirection':[0, 0, 1]
-}
+    'transferDirection':[0, 0, 1]}
 
 mdOptions = {
     # Tolerances
@@ -60,7 +64,7 @@ mdOptions = {
     # Solution Options
     'damp0':.5,
     'nMDIter':25,
-    'MDSolver':'GS',
+    'MDSolver':args.mdSolver,
     'MDSubSpaceSize':40,
 
     # Adjoint optoins
@@ -69,6 +73,14 @@ mdOptions = {
     # Monitor Options
     'monitorVars':['cl', 'cd', 'lift', 'norm_u', 'damp'],
     }
+
+transferOptions = {}
+
+AEROSOLVER = ADFLOW
+CFL=3.0
+MGCYCLE = '2w'
+MGSTART = 1
+useNK = False
 
 aeroOptions = {
     # Common Parameters
@@ -79,10 +91,10 @@ aeroOptions = {
     'equationType':'rans',
 
     # Common Parameters
-    'CFL':3.0,
-    'CFLCoarse':3.0,
-    'MGCycle':'2w',
-    'MGStartLevel':1,
+    'CFL':CFL,
+    'CFLCoarse':CFL,
+    'MGCycle':MGCYCLE,
+    'MGStartLevel':MGSTART,
     'nCyclesCoarse':250,
     'nCycles':50,
     'monitorvariables':['resrho','cl','cd'],
@@ -94,7 +106,7 @@ aeroOptions = {
     'L2Convergence':1e-12,
     'L2ConvergenceCoarse':1e-2,
     'L2ConvergenceRel':1e-1,
-    'useNKSolver':True,
+    'useNKSolver':useNK,
 
     # Adjoint Parameters
     'setMonitor':False,
@@ -106,7 +118,7 @@ aeroOptions = {
     'ILUFill':2,
     'ASMOverlap':1,
     'outerPreconIts':3,
-}
+    }
 
 meshOptions = {
     'gridFile':gridFile,
@@ -124,7 +136,7 @@ execfile('INPUT/setup_geometry.py')
 # Create discipline solvers
 if flags[aeroID]:
     # Create solver
-    CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
+    CFDSolver = AEROSOLVER(options=aeroOptions, comm=comm)
     CFDSolver.setDVGeo(DVGeo)
 
     mesh = MBMesh(options=meshOptions, comm=comm)
@@ -141,7 +153,6 @@ if flags[aeroID]:
     execfile('INPUT/setup_constraints.py')
 
 # Create the final aerostructural solver
-transferOptions = {}
 transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
 AS = AeroStruct(CFDSolver, FEASolver, transfer, gcomm, options=mdOptions)
 

@@ -120,7 +120,7 @@ All geometry creation and manipulation is done under the ``Geometry`` tab, outli
    :scale: 80
 
 1. Create curves and points from surfaces.
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     You will notice that the geometry section of the model tree contains only Subsets and Surfaces.
     We want to see the curves and points that define the boundaries of these surfaces.
     This can be done by clicking on the ``Repair Geometry`` button in the ``Geometry`` tab.
@@ -164,7 +164,7 @@ All geometry creation and manipulation is done under the ``Geometry`` tab, outli
        :scale: 30
 
 2. Create auxiliary curves
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~
     Now let's create some curves to help define the leading edge section of the surface mesh.
     First we need to create some points, so go back to the ``Create Point`` section.
     This time select the ``Parameter along a Curve`` operation.
@@ -191,7 +191,7 @@ The blocking is the underlying structure that defines the mesh.
 In the blocking we can define how many cells we want and how we want them to be arranged.
 
 1. Create 3D blocking with bounding box
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     The best way to create the blocking is to first create a 3-D bounding box and to then convert that blocking from 3-D to 2-D.
     This approach is preferred as it helps ICEM understand the topology, often preventing future issues.
 
@@ -211,7 +211,7 @@ In the blocking we can define how many cells we want and how we want them to be 
         :scale: 80
 
 2. Convert 3D blocking to 2D blocking
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Now the 3-D bounding box needs to be converted to a 2-D blocking (as we only want a surface mesh output from ICEM).
     To do this, select the fifth icon in the ``Create Block`` menu (shown below).
 
@@ -238,7 +238,7 @@ In the blocking we can define how many cells we want and how we want them to be 
     To complete the operation, click the middle mouse button.
 
 3. Associate blocking to geometry
-
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     In order to control the shape of the surface mesh, we can associate the block edges to curves on the geometry.
     We can do this with the ``Associate`` button in the ``Blocking`` tab.
     First, let's associate the vertices of the blocks to points on the geometry.
@@ -274,7 +274,7 @@ In the blocking we can define how many cells we want and how we want them to be 
     You will see that the mesh is collapsed in on itself (don't worry, we'll fix it in the next step).
 
 4. Split and adjust edges
-
+~~~~~~~~~~~~~~~~~~~~~~~~~
     To remedy the collapsed mesh, we need to create some control points along the edges.
 
     .. image:: images/icem_EditEdge.png
@@ -295,12 +295,16 @@ In the blocking we can define how many cells we want and how we want them to be 
     Now we want to do the same thing for the wingtip.
 
 5. Define edge properties
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 6. Split Block
+~~~~~~~~~~~~~~
 
 7. Check mesh quality
+~~~~~~~~~~~~~~~~~~~~~
 
 8. Ensure correct block orientation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Convert to MultiBlock Mesh
 --------------------------
