@@ -202,5 +202,6 @@ You can run it with the command:
 ::
 
     $ python <path-to-pyoptsparse>/postprocessing/OptView.py opt.hist
+
 .. centered::
     :ref:`opt_overview` | :ref:`opt_ffd`

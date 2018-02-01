@@ -48,7 +48,7 @@ Wing Definition
 ---------------
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
    :start-after: #rst Airfoil file
-   :end-before: #rst Wing Definition
+   :end-before: #rst Wing definition
 
 The wing is lofted from a set of airfoils distributed along the span of the wing.
 The airfoil data files can be downloaded from online or generated from a variety of software.

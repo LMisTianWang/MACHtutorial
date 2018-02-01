@@ -1,8 +1,8 @@
 .. _intro:
 
-############
+#############
 MACH Tutorial
-############
+#############
 
 Introduction
 ================================================================================
@@ -20,6 +20,7 @@ This will result in a much deeper understanding of how to use the tools and even
 To make this easier for you, we provide a basic script that will create the directory structure in your desired location so that all you have to do is create the files themselves.
 To run this script, go to the machtutorial root folder and run the following:
 ::
+
     python make_tutorial_directory.py my_tutorial
 
 where ``my_tutorial`` is the name of the folder in which you will build your scripts.
@@ -65,10 +66,11 @@ Documentation strategy
 The tutorial resides on `bitbucket.org <https://bitbucket.org/nbons/mdotutorial/downloads/>`_, but it is a living tutorial, which means that it is constantly updated with corrections and improvements.
 We invite you, especially as a new user, to take notes of the parts that you find confusing and bring them to the attention of an admin to the tutorial repository so that changes can be made.
 
-The *.rst files in the doc directory contain direct links to the python scripts in the tutorial directory to avoid code duplication.
+The rst files in the doc directory contain direct links to the python scripts in the tutorial directory to avoid code duplication.
 This is done using the ``start-after`` and ``end-before`` options of Sphinx's native ``literalinclude`` directive.
 We adopt the convention of using ``#rst <section subject>`` as the marker for the start and end of each ``literalinclude`` section, like so:
 ::
+
     #rst Simple addition (begin)
     a = 2
     b = 3
@@ -80,6 +82,3 @@ Please adopt this same convention for any future developments to the tutorial.
 Future Work
 ================================================================================
 Add explanation of pyOptSparse and OptView.
-
-.. centered::
-   :ref:`intro` | :ref:`aero_overview`
