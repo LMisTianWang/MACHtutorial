@@ -35,6 +35,7 @@ Table of Contents
 
    aero_overview
    struct_overview
+   aerostruct_overview
    opt_overview
 
 Required Software
@@ -52,6 +53,7 @@ Made in the MDOlab
 * `pyOptsparse <https://github.com/mdolab/pyoptsparse>`_
 * `cgnsUtilities <https://bitbucket.org/mdolab/cgnsutilities>`_
 * `baseclasses <https://bitbucket.org/mdolab/baseclasses>`_
+* `pyAeroStructure <https://bitbucket.org/mdolab/pyaerostructure>`_
 
 External Software
 -----------------
