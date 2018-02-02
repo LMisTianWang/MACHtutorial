@@ -4,16 +4,19 @@ with High-fidelity (MACH).
 
 Building the docs
 -----------------
-From the terminal, navigate to ``machtutorial/doc``
+From the terminal, navigate to machtutorial/doc.
 
 Run
-::
-
-    $ make html.
+    $ make html
 
 This generates html files in _build/html/.
 
-Run ``firefox _build/html/index.html`` or ``google-chrome _build/html/index.html`` to open the docs in your browser.
+Run
+    $ firefox _build/html/index.html
+or
+    $ google-chrome _build/html/index.html
+
+to open the tutorial in your browser.
 
 Required Packages to build
 --------------------------
