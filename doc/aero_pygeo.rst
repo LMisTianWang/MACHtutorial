@@ -27,7 +27,7 @@ Copy the following files from the MACHtutorial repository:
 
 Create the following empty runscript in the current directory:
 
-- ``generate_geometry.py``
+- ``generate_wing.py``
 
 Dissecting the pyGeo runscript
 ================================================================================
