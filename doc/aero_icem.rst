@@ -372,7 +372,7 @@ For this case, we will define properties for the edges of the blocks which will 
     .. note:: For reference, in the menu shown above, the numbers in the gray boxes next to some items (e.g., ``Spacing 1`` and ``Spacing 2``) show the smallest values that can actually be achieved. Also, the ``linked`` numbers shown when linking edges (e.g., ``linked 22 26``) correspond to the numbers of the vertices of the edges. These numbers can be displayed by checking ``Vertices`` in the model tree and then right-clicking it and clicking on ``Numbers``. These numbers can be used to verify that the correct edges are selected while linking.
     
     Similarly, we will now set the ``Edge Params`` for the longer horizontal leading and trailing edges.
-    Select the top edge at the leading side, enter 161 for ``Nodes``, select ``Hyperbolic`` for the ``Mesh law``, link ``Sp2`` to the horizontal edge closer to the wingtip that we set parameters for right before this, click the box for ``Copy Parameters`` if it is not already selected by default, and accept the options.
+    Select the top edge at the leading side, enter 161 for ``Nodes``, select ``Hyperbolic`` for the ``Mesh law``, set ``Spacing 1`` to 0.1, link ``Sp2`` to the horizontal edge closer to the wingtip that we set parameters for right before this, click the box for ``Copy Parameters`` if it is not already selected by default, and accept the options.
     At this point the mesh should look something like the following at the wingtip.
     
     .. image:: images/icem_BadMesh2.png
@@ -468,6 +468,9 @@ The window is shown below.
     :scale: 80
 
 The surface mesh is now ready for use in pyHyp.
+To proceed to the next tutorial (volume meshing with pyHyp), reduce the number of nodes specified for the edges so far (e.g., 17 to 5, and 161 to 41), and convert and export the mesh again.
+Or use the ``wing.cgns`` file provided in ``machtutorial/tutorial/aero/meshing/surface``.
+This should reduce computational time and the probability of pyHyp failing with the default options provided in the following tutorial and the mesh generated so far.
 
 .. centered::
     :ref:`aero_pygeo` | :ref:`aero_pyhyp`
