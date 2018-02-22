@@ -10,10 +10,11 @@ Part 2: Structural Analysis
 
 Overview
 ================================================================================
-TACS (Toolkit for the Analysis of Composite Structures)
-TACS is a Toolkit for Analysis of Composite Structures written in C++. This tutorial will help you use pyTACS the python interface of TACS. This toolkit is based on a parallelized FEA Solver:
-* Solution types: linear static, Nonlinear static, Buckling, ...
-* Elements: beams, shells, volumes
+TACS is the Toolkit for Analysis of Composite Structures written in C++.
+This tutorial will help you use pyTACS the python interface of TACS.
+
+    - Solution types: linear static, Nonlinear static, Buckling, ...
+    - Elements: beams, shells, volumes
 
 Table of Contents
 ================================================================================

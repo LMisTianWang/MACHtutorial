@@ -1,98 +1,109 @@
-"""
-Generate a simple wing-box sructure for the mdo-tutorial wing using
-pyLayout. This file will generate a .bdf file directly for use in TACS
-"""
-# ======================================================================
-#         Import modules
-# ======================================================================
+# ==============================================================================
+#       Import modules
+# ==============================================================================
 import numpy
 from pygeo import pyGeo, geo_utils
 from pylayout import pyLayout
 
-surfFile = 'wing.igs'
-geo = pyGeo('iges', fileName=surfFile)
-chords = [5, 1.25]
-offsets = [0, 7.5]
-span = 14.001
-nribs  = 19
-nbreak = 3
-nspars = 10
-elementOrder = 2
-spanSpace = 5*numpy.ones(nribs-1, 'intc')
-ribSpace = 2*numpy.ones(nspars+1, 'intc')
-verticalSpace = 3
-ribStiffnerSpace = 2
-stringerSpace = 2
+# ==============================================================================
+#       Specify wingbox properties
+# ==============================================================================
+chords = [5, 1.25]      # root and tip chords
+sweep = [0, 7.5]        # root and tip sweep
+span = 14.001           # wingspan
+sob = 1.5               # span location of side-of-body
+ncols  = 19             # number of columns (aligned with ribs)
+nrows = 10              # number of rows (aligned with spars)
+nbreak = 3              # column index of side-of-body kink
+
+# Number of quad elements in each component
+colSpace = 5 * numpy.ones(ncols-1, 'intc')  # elements between columns
+rowSpace = 2 * numpy.ones(nrows+1, 'intc')  # elements between rows
+verticalSpace = 3       # elements between skins
+ribStiffenerSpace = 2   # elements along rib stiffener depth
+stringerSpace = 2       # elements along stringer depth
+
+# ==============================================================================
+#       Set up blanking arrays
+# ==============================================================================
 # Blanking for ribs
-ribBlank = numpy.ones((nribs, nspars-1), 'intc') # None
+ribBlank = numpy.ones((ncols, nrows-1), 'intc')
 ribBlank[0, :] = 0 # Blank root rib
 
 # Blanking for spars
-sparBlank = numpy.zeros((nspars, nribs-1), 'intc')
+sparBlank = numpy.zeros((nrows, ncols-1), 'intc')
 sparBlank[0, :] = 1 # Keep First
 sparBlank[-1, :] = 1 # Keep Last
 
-# Blanking for top_stringers:
-topStringerBlank = numpy.zeros((nspars, nribs-1), 'intc')
+# Blanking for upper skin stringers:
+topStringerBlank = numpy.zeros((nrows, ncols-1), 'intc')
 topStringerBlank[:, :] = 1 # NO Blanking
 
-# Blanking for bot_stringers:
-botStringerBlank = numpy.zeros((nspars, nribs-1), 'intc')
+# Blanking for lower skin stringers:
+botStringerBlank = numpy.zeros((nrows, ncols-1), 'intc')
 botStringerBlank[:, :] = 1 # NO Blanking
 
-# Blanking for rib stiffners:
-ribStiffnerBlank = numpy.zeros((nribs, nspars), 'intc') # NO rib
-                                                        # stiffeners
+# Blanking for rib stiffeners:
+ribStiffenerBlank = numpy.zeros((ncols, nrows), 'intc') # No rib stiffeners
 teEdgeList = []
-# ------------------------------------------
 
-# Setup 'X', the array of rib/spar intersections
-leList = [[offsets[0] + 0.01*25*chords[0], 0, .01],
-          [offsets[0] + 0.01*25*chords[0], 0, 1.5],
-          [offsets[1] + 0.01*15*chords[1], 0, span]]
+# ==============================================================================
+#       Set up array of grid coordinates for ribs, spars, and stringers
+# ==============================================================================
+leList = [[sweep[0] + 0.25*chords[0], 0, .01],
+          [sweep[0] + 0.25*chords[0], 0, sob],
+          [sweep[1] + 0.15*chords[1], 0, span]]
 
-teList = [[offsets[0] + 0.01*80*chords[0], 0, .01],
-          [offsets[0] + 0.01*80*chords[0], 0, 1.5],
-          [offsets[1] + 0.01*75*chords[1], 0, span]]
+teList = [[sweep[0] + 0.80*chords[0], 0, .01],
+          [sweep[0] + 0.80*chords[0], 0, sob],
+          [sweep[1] + 0.75*chords[1], 0, span]]
 
-X = numpy.zeros((nribs, nspars, 3))
+# Initialize grid coordinate matrix
+X = numpy.zeros((ncols, nrows, 3))
 
-# Now Fill in between le_list and te_list with liear_edge
+# Fill in LE and TE coordinates from root to side-of-body
 X[0:nbreak, 0] = geo_utils.linearEdge(leList[0], leList[1], nbreak)
 X[0:nbreak, -1] = geo_utils.linearEdge(teList[0], teList[1], nbreak)
 
-X[nbreak-1:nribs, 0] = geo_utils.linearEdge(
-    leList[1], leList[2], nribs-nbreak+1)
-X[nbreak-1:nribs, -1] = geo_utils.linearEdge(
-    teList[1], teList[2], nribs-nbreak+1)
+# Fill in LE and TE coordinates from side-of-body to tip
+X[nbreak-1:ncols, 0] = geo_utils.linearEdge(leList[1], leList[2], ncols-nbreak+1)
+X[nbreak-1:ncols, -1] = geo_utils.linearEdge(teList[1], teList[2], ncols-nbreak+1)
 
 # Finally fill in chord-wise with linear edges
-for i in xrange(nribs):
-    X[i, :] = geo_utils.linearEdge(X[i, 0], X[i, -1], nspars)
+for i in xrange(ncols):
+    X[i, :] = geo_utils.linearEdge(X[i, 0], X[i, -1], nrows)
 
-# Set up pyLayout
-layout = pyLayout.Layout(geo, teEdgeList,
-                         nribs, nspars,
-                         elementOrder=elementOrder,
-                         X=X,
-                         ribBlank=ribBlank,
-                         sparBlank=sparBlank,
-                         topStringerBlank=topStringerBlank,
-                         botStringerBlank=botStringerBlank,
-                         ribStiffnerBlank=ribStiffnerBlank,
-                         minStringer_height = 0.025,
-                         maxStringer_height = 0.025,
-                         spanSpace=spanSpace,
-                         ribSpace=ribSpace,
-                         vSpace=verticalSpace,
-                         stringerSpace=stringerSpace,
-                         ribStiffnerSpace=ribStiffnerSpace,
-                         flipRibStiffner=False,
-                         flipUp=False,
-                         )
+# ==============================================================================
+#       Generate wingbox
+# ==============================================================================
+# Get surface definition to use for projections
+surfFile = 'wing.igs'
+geo = pyGeo('iges', fileName=surfFile)
 
-# Generate bdf file by calling 'finalize'
+# Initialize pyLayout
+layout = pyLayout.Layout(geo,
+                        teList=[],
+                        nribs=ncols,
+                        nspars=nrows,
+                        elementOrder=2,
+                        X=X,
+                        ribBlank=ribBlank,
+                        sparBlank=sparBlank,
+                        topStringerBlank=topStringerBlank,
+                        botStringerBlank=botStringerBlank,
+                        ribStiffenerBlank=ribStiffenerBlank,
+                        minStringer_height = 0.025,
+                        maxStringer_height = 0.025,
+                        spanSpace=colSpace,
+                        ribSpace=rowSpace,
+                        vSpace=verticalSpace,
+                        stringerSpace=stringerSpace,
+                        ribStiffenerSpace=ribStiffenerSpace,
+                        flipRibStiffner=False,
+                        flipUp=False)
+
+# Write bdf file
 layout.finalize('wingbox.bdf')
 
-# Also write a tecplot file so we can look at higher order models:
+# Write a tecplot file
 layout.writeTecplot('wingbox.dat')
