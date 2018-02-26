@@ -1,7 +1,6 @@
-# ======================================================================
+# ==============================================================================
 #         Import modules
-# ======================================================================
-import os
+# ==============================================================================
 import argparse
 import numpy
 from mpi4py import MPI
@@ -14,44 +13,122 @@ from pyspline import *
 from multipoint import *
 from pyaerostructure import *
 from repostate import *
-# ======================================================================
-#         Input Information
-# ======================================================================
+
+# ==============================================================================
+#         Command line arguments
+# ==============================================================================
 parser = argparse.ArgumentParser()
-parser.add_argument("--mdSolver", help="GS or NK. AS solver",
-                   type=str, default='GS')
-parser.add_argument("--output", help='Output directory', type=str,
-                    default='./')
-parser.add_argument("--shape", help='Use shape variables', type=int,
-                    default=0)
+parser.add_argument("--output", help='Output directory', type=str, default='.')
+parser.add_argument("--shape", help='Use shape variables', type=int, default=0)
 args = parser.parse_args()
 
-outputDirectory = args.output
-saveRepositoryInfo(outputDirectory)
-
+saveRepositoryInfo(args.output)
 gridFile = 'wing_vol.cgns'
 FFDFile = 'ffd.xyz'
 bdfFile = 'wingbox.bdf'
 gcomm = MPI.COMM_WORLD
-loadFactor = 2.5
-KSWeight = 80.0
 
 # Set Processor group sizes
 npStruct = 1
 npAero = gcomm.size - npStruct
-
-# Setup cruise aeroProblems
+# Create aero/structural comms
+comm, flags = createGroups([npStruct, npAero], comm=gcomm)
+aeroID = 1
+structID = 0
+# ==============================================================================
+#         Set up case problems
+# ==============================================================================
+# Set up aerodynamic problem
 ap = AeroProblem(name='cruise', mach=0.78, altitude=10000,
                  areaRef=45.5, alpha=2.0, chordRef=3.25,
                  evalFuncs=['lift', 'drag'])
-ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
+
+# Set up structural problem
 sp = StructProblem(ap.name, evalFuncs=['mass'])
+
+# Create aerostructural problem
 asp = AeroStructProblem(ap, sp)
 
-# Setup all options
+# ==============================================================================
+#         Set up aerodynamic analysis
+# ==============================================================================
+aeroOptions = {
+    # I/O Parameters
+    'gridFile':gridFile,
+    'outputDirectory':args.output,
+    'monitorvariables':['resrho','cl','cd'],
+    'setMonitor':False,
+    'printTiming':False,
+    'printIterations':False,
+    'writeTecplotSurfaceSolution':True,
+
+    # Physics Parameters
+    'equationType':'RANS',
+
+    # Solver Parameters
+    'smoother':'dadi',
+    'CFL':1.5,
+    'CFLCoarse':1.25,
+    'MGCycle':'3w',
+    'MGStartLevel':-1,
+    'nCyclesCoarse':250,
+
+    # ANK Solver Parameters
+    'useANKSolver':True,
+    'ankswitchtol':1e-1,
+    'ankmaxiter':80,
+    'anklinearsolvetol':0.05,
+    'ankpcilufill':2,
+    'ankasmoverlap':2,
+    'ankcflexponent':0.5,
+
+    # NK Solver Parameters
+    'useNKSolver':True,
+    'nkswitchtol':1e-4,
+
+    # Termination Criteria
+    'L2Convergence':1e-10,
+    'L2ConvergenceCoarse':1e-2,
+    'L2ConvergenceRel':1e-1,
+    'nCycles':1000,
+
+    # Adjoint Parameters
+    'adjointL2Convergence':1e-6,
+    'adjointMaxIter': 2000,
+}
+
+meshOptions = {
+    'gridFile':gridFile,
+    'warpType':'algebraic',
+    }
+
+# Set up ADFLOW on the aero procs
+if flags[aeroID]:
+    # Create solver
+    CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
+
+    # Set up mesh warping
+    mesh = MBMesh(options=meshOptions, comm=comm)
+    CFDSolver.setMesh(mesh)
+
+    # Do not set up TACS on these procs
+    FEASolver = None
+
+# ==============================================================================
+#         Set up structural analysis
+# ==============================================================================
 structOptions = {
     'transferDirection':[0, 0, 1]}
 
+# Set up TACS on the struct proc
+if flags[structID]:
+    FEASolver = pytacs.pyTACS(bdfFile, comm=comm, options=structOptions)
+    execfile('INPUT/setup_structure.py')
+    CFDSolver = None
+
+# ==============================================================================
+#         Set up aerostructural analysis
+# ==============================================================================
 mdOptions = {
     # Tolerances
     'relTol':1e-5,
@@ -64,7 +141,7 @@ mdOptions = {
     # Solution Options
     'damp0':.5,
     'nMDIter':25,
-    'MDSolver':args.mdSolver,
+    'MDSolver':'GS',
     'MDSubSpaceSize':40,
 
     # Adjoint optoins
@@ -76,87 +153,16 @@ mdOptions = {
 
 transferOptions = {}
 
-AEROSOLVER = ADFLOW
-CFL=3.0
-MGCYCLE = '2w'
-MGSTART = 1
-useNK = False
-
-aeroOptions = {
-    # Common Parameters
-    'gridFile':gridFile,
-    'outputDirectory':args.output,
-
-    # Physics Parameters
-    'equationType':'rans',
-
-    # Common Parameters
-    'CFL':CFL,
-    'CFLCoarse':CFL,
-    'MGCycle':MGCYCLE,
-    'MGStartLevel':MGSTART,
-    'nCyclesCoarse':250,
-    'nCycles':50,
-    'monitorvariables':['resrho','cl','cd'],
-    'nsubiterturb':3,
-    'printTiming':False,
-    'printIterations':False,
-
-    # Convergence Parameters
-    'L2Convergence':1e-12,
-    'L2ConvergenceCoarse':1e-2,
-    'L2ConvergenceRel':1e-1,
-    'useNKSolver':useNK,
-
-    # Adjoint Parameters
-    'setMonitor':False,
-    'applyadjointpcsubspacesize':10,
-    'adjointL2Convergence':1e-8,
-    'ADPC':True,
-    'adjointMaxIter': 500,
-    'adjointSubspaceSize':150,
-    'ILUFill':2,
-    'ASMOverlap':1,
-    'outerPreconIts':3,
-    }
-
-meshOptions = {
-    'gridFile':gridFile,
-    'warpType':'algebraic',
-    }
-
-# Create aero/structural comms
-comm, flags = createGroups([npStruct, npAero], comm=gcomm)
-aeroID = 1
-structID = 0
-
-# Setup Geometry
-execfile('INPUT/setup_geometry.py')
-
-# Create discipline solvers
-if flags[aeroID]:
-    # Create solver
-    CFDSolver = AEROSOLVER(options=aeroOptions, comm=comm)
-    CFDSolver.setDVGeo(DVGeo)
-
-    mesh = MBMesh(options=meshOptions, comm=comm)
-    CFDSolver.setMesh(mesh)
-    FEASolver = None
-
-if flags[structID]:
-    execfile('INPUT/setup_structure.py')
-    FEASolver.setDVGeo(DVGeo)
-    CFDSolver = None
-
-# Setup Constraints
-if flags[aeroID]:
-    execfile('INPUT/setup_constraints.py')
+# Create transfer object
+transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
 
 # Create the final aerostructural solver
-transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
 AS = AeroStruct(CFDSolver, FEASolver, transfer, gcomm, options=mdOptions)
 
-# Solve each aero Problem
+# ==============================================================================
+#         Solve!
+# ==============================================================================
+# Solve the aerostructural problem
 funcs = {}
 AS(asp)
 AS.evalFunctions(asp, funcs)
