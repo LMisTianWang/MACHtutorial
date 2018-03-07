@@ -1,21 +1,23 @@
 # ==============================================================================
 #       Import modules
 # ==============================================================================
+from __future__ import print_function
 import numpy
 from baseclasses import *
 from tacs import *
 from repostate import *
+from mpi4py import MPI
 
 # ==============================================================================
 #       Set up structural problem
 # ==============================================================================
-sp = StructProblem('2.5gload', #loadFile='../INPUT/forces.txt', loadFactor=2.5,
+sp = StructProblem('2.5gload', loadFile='forces.txt', loadFactor=2.5,
                      evalFuncs=['mass','ks0', 'ks1', 'ks2'])
 
 # ==============================================================================
 #       Initialize TACS
 # ==============================================================================
-bdfFile = '../geometry/wingbox.bdf'
+bdfFile = 'wingbox.bdf'
 structOptions = {
     'transferGaussOrder':3,
     # 'familySeparator':'..'
@@ -127,12 +129,8 @@ FEASolver.addFunction('max2', functions.MaxFailure, include=ks2, loadFactor=safe
 # ==============================================================================
 #       Add loads
 # ==============================================================================
-# Add point load to wing tip
-F = numpy.array([0.0, 3E5, 0.0]) #N
-pt = numpy.array([8.0208, -0.0885, 14.000])
-FEASolver.addPointLoads(sp, pt, F)
-
 # Add distributed load to tip rib
+F = numpy.array([0.0, 3e5, 0.0]) #N
 FEASolver.addLoadToComponents(sp, FEASolver.selectCompIDs(['RIB.18']), F=F)
 
 # Add pressure load (100 kPa) to upper skin of the wing
@@ -147,7 +145,8 @@ FEASolver.addInertialLoad(sp)
 FEASolver(sp)
 funcs = {}
 FEASolver.evalFunctions(sp, funcs)
-print funcs
+if MPI.COMM_WORLD.rank == 0:
+    print(funcs)
 
 # Write the final solution
 FEASolver.writeOutputFile(sp.name + '_final.f5')
