@@ -1,4 +1,5 @@
 #rst Imports
+from __future__ import print_function
 import numpy
 from adflow import ADFLOW
 from baseclasses import *
@@ -7,7 +8,7 @@ from mpi4py import MPI
 aeroOptions = {
     # I/O Parameters
     'gridFile':'wing_vol.cgns',
-    'outputDirectory':'output',
+    'outputDirectory':'.',
     'monitorvariables':['resrho','cl','cd'],
     'writeTecplotSurfaceSolution':True,
 
@@ -60,4 +61,4 @@ funcs = {}
 CFDSolver.evalFunctions(ap, funcs)
 # Print the evaluated functions
 if MPI.COMM_WORLD.rank == 0:
-    print funcs
+    print(funcs)
