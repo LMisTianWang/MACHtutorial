@@ -9,12 +9,6 @@ from repostate import *
 from mpi4py import MPI
 
 # ==============================================================================
-#       Set up structural problem
-# ==============================================================================
-sp = StructProblem('2.5gload', loadFile='forces.txt', loadFactor=2.5,
-                     evalFuncs=['mass','ks0', 'ks1', 'ks2'])
-
-# ==============================================================================
 #       Initialize TACS
 # ==============================================================================
 bdfFile = 'wingbox.bdf'
@@ -125,6 +119,12 @@ ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight
 FEASolver.addFunction('max0', functions.MaxFailure, include=ks0, loadFactor=safetyFactor)
 FEASolver.addFunction('max1', functions.MaxFailure, include=ks1, loadFactor=safetyFactor)
 FEASolver.addFunction('max2', functions.MaxFailure, include=ks2, loadFactor=safetyFactor)
+
+# ==============================================================================
+#       Set up structural problem
+# ==============================================================================
+sp = StructProblem('2.5gload', loadFile='forces.txt', loadFactor=2.5,
+                     evalFuncs=['mass','ks0', 'ks1', 'ks2'])
 
 # ==============================================================================
 #       Add loads
