@@ -68,6 +68,7 @@ To adjust your view of the geometry in ICEM the following functions are possible
     - Drag mouse left/right: Rotate view in viewing plane
 - ``x`` on the keyboard: fit the complete geometry to the window
 - ``z`` on the keyboard: allows creating a zoom-in box on the viewing pane with the left mouse button
+
 .. _icem_appearance:
 
 Changing the appearance of the geometry
@@ -358,7 +359,7 @@ For this case, we will define properties for the edges of the blocks which will 
     In the ``Blocking`` tab, click on the ``Split Block`` button (an axe with a cube).
     In the menu at the bottom left, also select the ``Split Block`` option (an axe with a cube).
     Click on the arrow to the right of the ``Edge`` box, then click on the upper leading edge near the wing tip, as shown below to split the block.
-    
+
     .. image:: images/icem_SplitBlock.png
         :scale: 40
 
@@ -370,14 +371,14 @@ For this case, we will define properties for the edges of the blocks which will 
         :scale: 60
 
     .. note:: For reference, in the menu shown above, the numbers in the gray boxes next to some items (e.g., ``Spacing 1`` and ``Spacing 2``) show the smallest values that can actually be achieved. Also, the ``linked`` numbers shown when linking edges (e.g., ``linked 22 26``) correspond to the numbers of the vertices of the edges. These numbers can be displayed by checking ``Vertices`` in the model tree and then right-clicking it and clicking on ``Numbers``. These numbers can be used to verify that the correct edges are selected while linking.
-    
+
     Similarly, we will now set the ``Edge Params`` for the longer horizontal leading and trailing edges.
     Select the top edge at the leading side, enter 161 for ``Nodes``, select ``Hyperbolic`` for the ``Mesh law``, set ``Spacing 1`` to 0.1, link ``Sp2`` to the horizontal edge closer to the wingtip that we set parameters for right before this, click the box for ``Copy Parameters`` if it is not already selected by default, and accept the options.
     At this point the mesh should look something like the following at the wingtip.
-    
+
     .. image:: images/icem_BadMesh2.png
         :scale: 60
-    
+
     Next, we will disassociate the edges at the wingtip from the curves we had selected in Step 3.
     In the ``Blocking`` tab, click on the ``Associate`` button, and click the  ``Disassociate from Geometry`` (a finger with an X) button in the bottom left menu.
     For ``Edges``, select both halves of the top edge at the wingtip and the bottom edge at the wingtip, and accept.
@@ -386,13 +387,13 @@ For this case, we will define properties for the edges of the blocks which will 
         :scale: 60
 
     Next, click the ``Associate edge to Surface`` button under ``Edit Associations`` then select both halves of the top edge at the wingtip and the bottom edge at the wingtip, and accept.
-    
+
     Now we will split these edges into a lot more pieces (``Edit Edge`` in the ``Blocking`` tab, then ``Split Edge`` as described in Step 4).
     Split the top edge at the wingtip into about 6 segments and split the bottom edge at the wingtip into about 12 segments.
     For the upper chordwise edge inboard of the wingtip edge, split the edges into 2 segments.
     Splitting edges provides greater flexibility and more can be created if required.
     The following is what the edges should look like at this point.
-    
+
     .. image:: images/icem_SplitTips.png
         :scale: 40
 
@@ -408,7 +409,7 @@ For this case, we will define properties for the edges of the blocks which will 
         :scale: 40
 
     The pre-mesh should look something like the following at this point.
-    
+
     .. image:: images/icem_BetterMesh.png
         :scale: 40
 
@@ -420,7 +421,7 @@ For this case, we will define properties for the edges of the blocks which will 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     Using the mesh quality check, we see that we have a better quality mesh at this point (although it can certainly still be improved with more fine tuning and splitting of edges).
-    
+
     .. image:: images/icem_BetterMeshQuality.png
         :scale: 80
 
