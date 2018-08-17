@@ -38,6 +38,7 @@ Table of Contents
    struct_overview
    aerostruct_overview
    opt_overview
+   airfoilopt_overview
 
 Required Software
 ================================================================================
