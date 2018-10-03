@@ -46,7 +46,7 @@ CFDSolver.addSlices('z', numpy.linspace(0.1, 14, 10))
 
 #rst Create AeroProblem
 ap = AeroProblem(name='wing',
-    mach=0.82,
+    mach=0.8,
     altitude=10000,
     alpha=1.5,
     areaRef=45.5,

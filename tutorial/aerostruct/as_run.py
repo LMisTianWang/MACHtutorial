@@ -113,7 +113,7 @@ structOptions = {
 # Set up TACS on the struct proc
 if flags[structID]:
     FEASolver = pytacs.pyTACS('wingbox.bdf', comm=comm, options=structOptions)
-    execfile('INPUT/setup_structure.py')
+    execfile('setup_structure.py')
     CFDSolver = None
 
 # ==============================================================================

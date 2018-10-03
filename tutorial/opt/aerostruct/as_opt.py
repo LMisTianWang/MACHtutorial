@@ -38,6 +38,8 @@ gridFile = 'wing_vol.cgns'
 # ==============================================================================
 TOW = 121000    # Aircraft takeoff weight in lbs
 Mref = TOW / 2.20462 / 2 * 9.81   # half body mass in Newtons
+Sref = 45.5     # half-wing in m^2
+chordRef = 3.25 # meters
 
 # ==============================================================================
 # Processor allocation
@@ -65,16 +67,16 @@ if comm.rank == 0:
 # ==============================================================================
 # Setup cruise problems
 cruiseProblems = []
-ap = AeroProblem(name='cruise', mach=0.8, altitude=10000, areaRef=45.5,
-    alpha=2.0, chordRef=3.25, evalFuncs=['lift', 'drag'])
+ap = AeroProblem(name='cruise', mach=0.8, altitude=10000, areaRef=Sref,
+    alpha=2.0, chordRef=chordRef, evalFuncs=['lift', 'drag'])
 ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
 sp = StructProblem(ap.name, evalFuncs=['mass'])
 cruiseProblems.append(AeroStructProblem(ap, sp))
 
 # Setup maneuver problems
 maneuverProblems = [] # List of maneuver AeroStruct problem objects
-ap = AeroProblem(name='maneuver', mach=0.75, altitude=5000, areaRef=45.5,
-    alpha=2.0, chordRef=3.25, evalFuncs=['lift'])
+ap = AeroProblem(name='maneuver', mach=0.75, altitude=5000, areaRef=Sref,
+    alpha=2.0, chordRef=chordRef, evalFuncs=['lift'])
 ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
 sp = StructProblem(ap.name, evalFuncs=['ks0', 'ks1', 'ks2'], loadFactor=2.5)
 maneuverProblems.append(AeroStructProblem(ap, sp))
