@@ -298,7 +298,15 @@ MP.setOptProb(optProb)
 # Run optimization
 # ==============================================================================
 # Create optimizer
-opt = OPT('snopt')
+optOptions = {
+    'Function precision':1e-4,
+    'Major feasibility tolerance':1.0e-4,
+    'Major optimality tolerance':1.0e-4,
+    'Difference interval':1e-3,
+    'Print file':os.path.join(outputDirectory, 'SNOPT_print.out'),
+    'Summary file':os.path.join(outputDirectory, 'SNOPT_summary.out'),
+}
+opt = OPT('snopt', options=optOptions)
 
 # Load the optimized structural variables
 optProb.setDVsFromHistory('struct.hst')
