@@ -1,45 +1,34 @@
 # ==============================================================================
 #         Import modules
 # ==============================================================================
-import argparse
+from __future__ import print_function
 import numpy
 from mpi4py import MPI
 from baseclasses import *
 from tacs import *
 from adflow import *
 from pywarp import *
-from pygeo import *
-from pyspline import *
 from multipoint import *
 from pyaerostructure import *
 from repostate import *
+saveRepositoryInfo()
 
-# ==============================================================================
-#         Command line arguments
-# ==============================================================================
-parser = argparse.ArgumentParser()
-parser.add_argument("--output", help='Output directory', type=str, default='.')
-parser.add_argument("--shape", help='Use shape variables', type=int, default=0)
-args = parser.parse_args()
-
-saveRepositoryInfo(args.output)
 gridFile = 'wing_vol.cgns'
-FFDFile = 'ffd.xyz'
-bdfFile = 'wingbox.bdf'
 gcomm = MPI.COMM_WORLD
 
-# Set Processor group sizes
+# Set 1 processor for TACS, the rest go to ADflow
 npStruct = 1
 npAero = gcomm.size - npStruct
+
 # Create aero/structural comms
 comm, flags = createGroups([npStruct, npAero], comm=gcomm)
-aeroID = 1
-structID = 0
+structID = 0    # zeroth group is structure
+aeroID = 1      # first group is aero
 # ==============================================================================
 #         Set up case problems
 # ==============================================================================
 # Set up aerodynamic problem
-ap = AeroProblem(name='cruise', mach=0.78, altitude=10000,
+ap = AeroProblem(name='cruise', mach=0.8, altitude=10000,
                  areaRef=45.5, alpha=2.0, chordRef=3.25,
                  evalFuncs=['lift', 'drag'])
 
@@ -55,7 +44,6 @@ asp = AeroStructProblem(ap, sp)
 aeroOptions = {
     # I/O Parameters
     'gridFile':gridFile,
-    'outputDirectory':args.output,
     'monitorvariables':['resrho','cl','cd'],
     'setMonitor':False,
     'printTiming':False,
@@ -118,11 +106,13 @@ if flags[aeroID]:
 #         Set up structural analysis
 # ==============================================================================
 structOptions = {
-    'transferDirection':[0, 0, 1]}
+    'gravityVector':[0, -9.81, 0],
+    'projectVector':[0, 1, 0],     # normal to planform
+}
 
 # Set up TACS on the struct proc
 if flags[structID]:
-    FEASolver = pytacs.pyTACS(bdfFile, comm=comm, options=structOptions)
+    FEASolver = pytacs.pyTACS('wingbox.bdf', comm=comm, options=structOptions)
     execfile('INPUT/setup_structure.py')
     CFDSolver = None
 
@@ -135,7 +125,6 @@ mdOptions = {
     'adjointRelTol':1e-5,
 
     # Output Options
-    'outputDir':args.output,
     'saveIterations':True,
 
     # Solution Options
@@ -167,10 +156,10 @@ funcs = {}
 AS(asp)
 AS.evalFunctions(asp, funcs)
 if gcomm.rank == 0:
-    print funcs
+    print(funcs)
 
 # Also solve adjoints
 funcsSens = {}
 AS.evalFunctionsSens(asp, funcsSens)
 if gcomm.rank == 0:
-    print funcsSens
+    print(funcsSens)

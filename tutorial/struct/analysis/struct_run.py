@@ -13,9 +13,9 @@ from mpi4py import MPI
 # ==============================================================================
 bdfFile = 'wingbox.bdf'
 structOptions = {
-    'transferGaussOrder':3,
-    # 'familySeparator':'..'
-    }
+    'gravityVector':[0, -9.81, 0],
+    'projectVector':[0, 1, 0],     # normal to planform
+}
 FEASolver = pytacs.pyTACS(bdfFile, options=structOptions)
 
 # ==============================================================================
@@ -113,7 +113,7 @@ ks0 = FEASolver.addFunction('ks0', functions.AverageKSFailure, KSWeight=KSWeight
 ks1 = FEASolver.addFunction('ks1', functions.AverageKSFailure,  KSWeight=KSWeight,
                             include=['U_SKIN','U_STRING'], loadFactor=safetyFactor)
 ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight,
-                            include=['L_SKING','L_STRING'], loadFactor=safetyFactor)
+                            include=['L_SKIN','L_STRING'], loadFactor=safetyFactor)
 
 # Max failure functions
 FEASolver.addFunction('max0', functions.MaxFailure, include=ks0, loadFactor=safetyFactor)

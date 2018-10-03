@@ -68,7 +68,7 @@ CFDSolver.addLiftDistribution(200, 'z')
 #         Set up flow conditions with AeroProblem
 # ======================================================================
 #rst aeroproblem (beg)
-ap = AeroProblem(name='fc', alpha=1.5, mach=0.82, altitude=10000,
+ap = AeroProblem(name='fc', alpha=1.5, mach=0.8, altitude=10000,
                  areaRef=45.5, chordRef=3.25, evalFuncs=['cl','cd'])
 
 # Add angle of attack variable

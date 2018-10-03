@@ -1,26 +1,4 @@
 # ==============================================================================
-#         Import modules
-# ==============================================================================
-from __future__ import print_function
-from pprint import pprint
-import numpy
-from mpi4py import MPI
-from baseclasses import *
-from tacs import *
-from pyoptsparse import *
-from repostate import *
-
-# ==============================================================================
-#       Initialize TACS
-# ==============================================================================
-bdfFile = 'wingbox.bdf'
-structOptions = {
-    'gravityVector':[0, -9.81, 0],
-    'projectVector':[0, 1, 0],     # normal to planform
-}
-FEASolver = pytacs.pyTACS(bdfFile, options=structOptions)
-
-# ==============================================================================
 #       Set up design variable groups
 # ==============================================================================
 # Give each rib its own design variable group under the 'RIBS' category
@@ -94,7 +72,7 @@ def conCallBack(dvNum, compDescripts, userDescript, specialDVs, **kargs):
 FEASolver.createTACSAssembler(conCallBack)
 
 # Write out components to visualize design variables (contour of dv0)
-FEASolver.writeDVVisualization('dv_visual.f5')
+# FEASolver.writeDVVisualization('dv_visual.f5')
 
 # ==============================================================================
 #       Add functions
@@ -121,53 +99,3 @@ ks2 = FEASolver.addFunction('ks2', functions.AverageKSFailure, KSWeight=KSWeight
 FEASolver.addFunction('max0', functions.MaxFailure, include=ks0, loadFactor=safetyFactor)
 FEASolver.addFunction('max1', functions.MaxFailure, include=ks1, loadFactor=safetyFactor)
 FEASolver.addFunction('max2', functions.MaxFailure, include=ks2, loadFactor=safetyFactor)
-
-# ==============================================================================
-#       Set up structural problem
-# ==============================================================================
-sp = StructProblem('2.5gload', loadFile='forces.txt', loadFactor=2.5,
-                     evalFuncs=['mass','ks0', 'ks1', 'ks2'])
-
-FEASolver.addInertialLoad(sp)
-
-# ==============================================================================
-#       Set up optimization
-# ==============================================================================
-def obj(x):
-    funcs = {}
-    FEASolver.setDesignVars(x)
-    FEASolver(sp)
-    FEASolver.evalFunctions(sp, funcs)
-    if MPI.COMM_WORLD.rank == 0:
-        print(funcs)
-    massFuncs = {}
-    FEASolver.evalFunctions(sp, massFuncs, evalFuncs=['uSkin', 'lSkin',
-        'leSpar', 'teSpar', 'ribs'])
-    if MPI.COMM_WORLD.rank == 0:
-        print('Mass functions')
-        pprint(massFuncs)
-    return funcs
-
-def sens(x, funcs):
-    funcsSens = {}
-    FEASolver.evalFunctionsSens(sp, funcsSens)
-    return funcsSens
-
-# Set up the optimization problem
-optProb = Optimization('Mass minimization', obj)
-optProb.addObj('2.5gload_mass')
-FEASolver.addVariablesPyOpt(optProb)
-
-for i in range(3):
-    optProb.addCon('%s_ks%d'% (sp.name, i), upper=1.0)
-
-if MPI.COMM_WORLD.rank == 0:
-    print(optProb)
-optProb.printSparsity()
-
-optOptions = {}
-opt = OPT('snopt', options=optOptions)
-sol = opt(optProb, sens=sens, storeHistory='struct.hst')
-
-# Write the final solution
-FEASolver.writeOutputFile('final.f5')

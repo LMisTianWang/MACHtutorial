@@ -2,7 +2,7 @@
 #         Geometric Design Variable Set-up
 # ======================================================================
 # Create DVGeometry object
-DVGeo = DVGeometry(FFDFile)
+DVGeo = DVGeometry('ffd.xyz')
 
 # Create reference axis
 nRefAxPts = DVGeo.addRefAxis('wing', xFraction=0.25, alignIndex='k')

@@ -1,14 +1,15 @@
-# ======================================================================
-#         Import modules
-# ======================================================================
+# ==============================================================================
+# Import modules
+# ==============================================================================
+from __future__ import print_function
 import os
 import argparse
 import numpy
 import sys
+from pprint import pprint
 from mpi4py import MPI
 from baseclasses import *
 from tacs import *
-from tripan import TRIPAN
 from adflow import ADFLOW
 from pywarp import *
 from pygeo import *
@@ -17,92 +18,159 @@ from multipoint import *
 from pyaerostructure import *
 from repostate import *
 from pyoptsparse import Optimization, OPT
-# ======================================================================
-#         Input Information
-# ======================================================================
+# ==============================================================================
+# Input Information
+# ==============================================================================
 # Use Python's built-in Argument parser to get commandline options
 parser = argparse.ArgumentParser()
-parser.add_argument("--solver", help="solver to use: adflow or tripan",
-                    type=str, default='adflow')
-parser.add_argument("--mode", help="rans or euler. adflow solver only",
-                   type=str, default='euler')
-parser.add_argument("--output", help='Output directory', type=str,
-                    default='./')
-parser.add_argument("--shape", help='Use shape variables', type=int,
-                    default=0)
-parser.add_argument("--opt", help="optimizer to use", type=str, default='snopt')
-parser.add_argument('--optOptions', type=str, help="Options for the optimizer.", default="{}")# Specify options \
-#like this: --optOptions="{'name':value}"", default="{}"')
-# parser.parse_args() must be called
+parser.add_argument("--output", type=str, default='.')
+parser.add_argument("--shape", type=int, default=0)
+parser.add_argument("--npcruise", type=int, default=2)
+parser.add_argument("--npmaneuver", type=int, default=2)
 args = parser.parse_args()
-# This "executes" the optimization options to get a dictionary
-exec('optOptions=%s'% args.optOptions)
 
 outputDirectory = args.output
 saveRepositoryInfo(outputDirectory)
+gridFile = 'wing_vol.cgns'
 
-triFile = '../INPUT/mdo_tutorial.tripan'
-wakeFile = '../INPUT/mdo_tutorial.wake'
-edgeFile = '../INPUT/mdo_tutorial.edge'
-eulerFile = '../INPUT/euler_grid.cgns'
-ransFile = '../INPUT/rans_grid_l2.cgns'
-FFDFile = '../INPUT/mdo_tutorial_ffd.fmt'
-bdfFile = '../INPUT/mdo_tutorial.bdf'
-nTwist = 6
-nGroup = 1
-nProcPerGroup = 4
+# ==============================================================================
+# Aircraft Data
+# ==============================================================================
+TOW = 121000    # Aircraft takeoff weight in lbs
+Mref = TOW / 2.20462 / 2 * 9.81   # half body mass in Newtons
 
-loadFactor = 2.5
-KSWeight = 80.0
-M_ref = (121000/2.20/2)*9.81 # 121,000 lb MTOW  -> half wing N
-BETA = 2.0
+# ==============================================================================
+# Processor allocation
+# ==============================================================================
+#  Create multipoint communication object
+MP = multiPointSparse(MPI.COMM_WORLD)
+MP.addProcessorSet('cruise', nMembers=1, memberSizes=args.npcruise)
+MP.addProcessorSet('maneuver', nMembers=1, memberSizes=args.npmaneuver)
+comm, setComm, setFlags, groupFlags, ptID = MP.createCommunicators()
+setName = MP.getSetName()
+ptDirs = MP.createDirectories(args.output)
 
-# Set Processor group sizes
-npStruct = 1
-npAero = MPI.COMM_WORLD.size - npStruct
+# Create a directory for all standard output
+stdoutDir = os.path.join(args.output, 'stdout')
+if MP.gcomm.rank == 0:
+    os.system('mkdir -p %s'%stdoutDir)
+MP.gcomm.barrier()
+if comm.rank == 0:
+    fName = os.path.join(stdoutDir, '%s_%d.out'%(setName, ptID))
+    outFile = open(fName, 'w', buffering=0)
+    redirectIO(outFile)
 
-# Setup cruise aeroProblems
-mach = [.78, 0.80, 0.82]
-cruiseProblems = [] # List of cruise AeroStruct problem objects
-nCruiseCases = 1 # Override the number to use
-CRUISE_LIFT_STAR = {} # The target phsyical lift 
+# ==============================================================================
+# Set up case problems
+# ==============================================================================
+# Setup cruise problems
+cruiseProblems = []
+ap = AeroProblem(name='cruise', mach=0.8, altitude=10000, areaRef=45.5,
+    alpha=2.0, chordRef=3.25, evalFuncs=['lift', 'drag'])
+ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
+sp = StructProblem(ap.name, evalFuncs=['mass'])
+cruiseProblems.append(AeroStructProblem(ap, sp))
 
-for j in xrange(nCruiseCases):
-    ap = AeroProblem(name='cruise%d'%j, mach=mach[j], altitude=10000,
-                     areaRef=45.5, alpha=2.0, chordRef=3.25,
-                     evalFuncs=['lift', 'drag'])
-    ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
-    sp = StructProblem(ap.name, evalFuncs=['mass'])
-    cruiseProblems.append(AeroStructProblem(ap, sp))
-    CRUISE_LIFT_STAR[ap.name] = M_ref
-
-# Setup maneuver aeroProblems
-mach = [.78]
+# Setup maneuver problems
 maneuverProblems = [] # List of maneuver AeroStruct problem objects
-nManeuverCases = 1 # Override number to use
-MANEUVER_LIFT_STAR = {} # The target physical lift constraint vals
-for j in xrange(nManeuverCases):
-    ap = AeroProblem(name='maneuver%d'%j, mach=mach[j], altitude=5000,
-                     areaRef=45.5, alpha=2.0, chordRef=3.25,
-                     evalFuncs=['lift'])
-    ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
-    sp = StructProblem(ap.name, evalFuncs=['ks0', 'ks1', 'ks2'])
-    maneuverProblems.append(AeroStructProblem(ap, sp))
-    MANEUVER_LIFT_STAR[ap.name] = M_ref*2.5
+ap = AeroProblem(name='maneuver', mach=0.75, altitude=5000, areaRef=45.5,
+    alpha=2.0, chordRef=3.25, evalFuncs=['lift'])
+ap.addDV('alpha', lower=0, upper=10.0, scale=0.1)
+sp = StructProblem(ap.name, evalFuncs=['ks0', 'ks1', 'ks2'], loadFactor=2.5)
+maneuverProblems.append(AeroStructProblem(ap, sp))
 
-# Set all the Solver options here:
+# ==============================================================================
+# Geometric Design Variable Set-up
+# ==============================================================================
+execfile('INPUT/setup_geometry.py')
+
+# ==============================================================================
+# Set up aerodynamic analysis
+# ==============================================================================
+aeroOptions = {
+    # I/O Parameters
+    'gridFile':gridFile,
+    'outputDirectory': ptDirs[setName][ptID],
+    'monitorvariables':['resrho','cl','cd'],
+    'setMonitor':False,
+    'printTiming':False,
+    'printIterations':False,
+    'writeTecplotSurfaceSolution':True,
+
+    # Physics Parameters
+    'equationType':'RANS',
+
+    # Solver Parameters
+    'smoother':'dadi',
+    'CFL':1.5,
+    'CFLCoarse':1.25,
+    'MGCycle':'3w',
+    'MGStartLevel':-1,
+    'nCyclesCoarse':250,
+
+    # ANK Solver Parameters
+    'useANKSolver':True,
+    'ankswitchtol':1e-1,
+    'ankmaxiter':80,
+    'anklinearsolvetol':0.05,
+    'ankpcilufill':2,
+    'ankasmoverlap':2,
+    'ankcflexponent':0.5,
+
+    # NK Solver Parameters
+    'useNKSolver':True,
+    'nkswitchtol':1e-4,
+
+    # Termination Criteria
+    'L2Convergence':1e-10,
+    'L2ConvergenceCoarse':1e-2,
+    'L2ConvergenceRel':1e-1,
+    'nCycles':1000,
+
+    # Adjoint Parameters
+    'adjointL2Convergence':1e-6,
+    'adjointMaxIter': 2000,
+}
+
+meshOptions = {
+    'gridFile':gridFile,
+    'warpType':'algebraic',
+    }
+
+# Create solver
+CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
+
+# Set up mesh warping
+mesh = MBMesh(options=meshOptions, comm=comm)
+CFDSolver.setMesh(mesh)
+CFDSolver.setDVGeo(DVGeo)
+
+# ==============================================================================
+# Set up structural analysis
+# ==============================================================================
 structOptions = {
-    'transferDirection':[0, 0, 1]}
+    'gravityVector':[0, -9.81, 0],
+    'projectVector':[0, 1, 0],     # normal to planform
+}
 
+# Set up TACS on the struct proc
+FEASolver = pytacs.pyTACS('wingbox.bdf', comm=comm, options=structOptions)
+FEASolver.setDVGeo(DVGeo)
+execfile('INPUT/setup_structure.py')
+
+
+# ==============================================================================
+# Set up aerostructural analysis
+# ==============================================================================
 mdOptions = {
     # Tolerances
     'relTol':1e-5,
     'adjointRelTol':1e-5,
-    
+
     # Output Options
-    'outputDir':args.output,
+    'outputDir':ptDirs[setName][ptID],
     'saveIterations':True,
-      
+
     # Solution Options
     'damp0':.5,
     'nMDIter':25,
@@ -111,227 +179,136 @@ mdOptions = {
 
     # Adjoint optoins
     'adjointSolver':'KSP',
-   
+    'nadjointiter':15,
     # Monitor Options
     'monitorVars':['cl', 'cd', 'lift', 'norm_u', 'damp'],
     }
 
 transferOptions = {}
 
-if args.solver == 'tripan':
-    AEROSOLVER = TRIPAN
-    aeroOptions = {'outputDirectory':args.output,
-                   'writeSolution':True,
-                   'dragMethod':'total',
-                   'useSymmetry':True,
-                   'nWakeCells':1,
-                   'printIterations':False,
-                   'numberSolutions':True,
-                   'wakeLength':455.0,
-                   'tripanFile':triFile,
-                   'wakeFile':wakeFile,
-                   'edgeFileList':[edgeFile]}
-else:
-    AEROSOLVER = ADFLOW
-    if args.mode == 'euler':
-        gridFile = eulerFile
-        CFL=1.2
-        MGCYCLE = '3w'
-        MGSTART = -1
-        useNK = True
-    else:
-        gridFile = ransFile
-        CFL=3.0
-        MGCYCLE = '2w'
-        MGSTART = 1
-        useNK = False
-       
-    aeroOptions = {
-        # Common Parameters
-        'gridFile':gridFile,
-        'outputDirectory':args.output,
-
-        # Physics Parameters
-        'equationType':args.mode,
-
-        # Common Parameters
-        'CFL':CFL,
-        'CFLCoarse':CFL,
-        'MGCycle':MGCYCLE,
-        'MGStartLevel':MGSTART,
-        'nCyclesCoarse':250,
-        'nCycles':50,
-        'monitorvariables':['resrho','cl','cd'],
-        'nsubiterturb':3,
-        'printTiming':False,
-        'printIterations':False,
-
-        # Convergence Parameters
-        'L2Convergence':1e-12,
-        'L2ConvergenceCoarse':1e-2,
-        'L2ConvergenceRel':1e-1,
-        'useNKSolver':useNK,
-
-        # Adjoint Parameters
-        'setMonitor':False,
-        'applyadjointpcsubspacesize':15,
-        'adjointL2Convergence':1e-8,
-        'ADPC':True,
-        'adjointMaxIter': 500,
-        'adjointSubspaceSize':150, 
-        'ILUFill':2,
-        'ASMOverlap':1,
-        'outerPreconIts':3,
-        }
-
-    meshOptions = {
-        'gridFile':gridFile,
-        'warpType':'algebraic',
-        }
-
-#  Create multipoint communication object
-MP = multiPointSparse(MPI.COMM_WORLD)
-MP.addProcessorSet('combined', nMembers=nGroup, memberSizes=nProcPerGroup)
-gcomm, setComm, setFlags, groupFlags, ptID = MP.createCommunicators()
-
-# Create aero/structural comms from the 'gcomm' returned from the MP
-# object. The 'flags' is used to determine which processor we are
-# on. flags[aeroID] will be true on a aero proc, and flags[structID]
-# will be true on a structure process. 
-comm, flags = createGroups([npStruct, npAero], comm=gcomm)
-aeroID = 1
-structID = 0
-
-# Setup Geometry
-execfile('../common_files/setup_geometry.py')
-
-# Create discipline solvers
-if flags[aeroID]:
-    CFDSolver = AEROSOLVER(options=aeroOptions, comm=comm)
-    CFDSolver.setDVGeo(DVGeo)
-
-    if args.solver == 'adflow':
-        mesh = MBMesh(options=meshOptions, comm=comm)
-        CFDSolver.setMesh(mesh)
-    FEASolver = None
-    
-elif flags[structID]:
-    execfile('../common_files/setup_structure.py')
-    FEASolver.setDVGeo(DVGeo)
-    CFDSolver = None
-
-# Setup Constraints
-if flags[aeroID]:
-    execfile('../common_files/setup_constraints.py')
+# Create transfer object
+transfer = TACSLDTransfer(CFDSolver, FEASolver, comm, options=transferOptions)
 
 # Create the final aerostructural solver
-transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
-AS = AeroStruct(CFDSolver, FEASolver,transfer, gcomm, options=mdOptions)
+AS = AeroStruct(CFDSolver, FEASolver, transfer, comm, options=mdOptions)
 
+# ==============================================================================
+# DVConstraint Setup
+# ==============================================================================
+execfile('INPUT/setup_constraints.py')
+
+# ==============================================================================
+# Analysis and Sensitivity Functions
+# ==============================================================================
 def cruiseObj(x):
+    if comm.rank == 0:
+        print('Design Variables')
+        pprint(x)
     funcs = {}
     DVGeo.setDesignVars(x)
-    if flags[aeroID]:
-        DVCon.evalFunctions(funcs)
-    if flags[structID]:
-        FEASolver.setDesignVars(x)
-    for i in range(nCruiseCases):
-        if i%nGroup == ptID:
-            cruiseProblems[i].setDesignVars(x)
-            AS(cruiseProblems[i])
-            AS.evalFunctions(cruiseProblems[i], funcs)
-            AS.checkSolutionFailure(cruiseProblems[i], funcs)
-    if MPI.COMM_WORLD.rank == 0:
-        print x, funcs
+    DVCon.evalFunctions(funcs)
+    FEASolver.setDesignVars(x)
+    cp = cruiseProblems[0]
+    cp.setDesignVars(x)
+    AS(cp)
+    AS.evalFunctions(cp, funcs)
+    AS.checkSolutionFailure(cp, funcs)
+    if comm.rank == 0:
+        print('Cruise functions')
+        pprint(funcs)
     return funcs
 
 def cruiseSens(x, funcs):
     funcsSens = {}
-    for i in range(nCruiseCases):
-        if i%nGroup == ptID:
-            AS.evalFunctionsSens(cruiseProblems[i], funcsSens)
-    if flags[aeroID]:
-        DVCon.evalFunctionsSens(funcsSens)
+    cp = cruiseProblems[0]
+    AS.evalFunctionsSens(cp, funcsSens)
+    DVCon.evalFunctionsSens(funcsSens)
     return funcsSens
 
 def maneuverObj(x):
+    if comm.rank == 0:
+        print('Design Variables')
+        pprint(x)
     funcs = {}
-    for i in range(nManeuverCases):
-        if i%nGroup == ptID:
-            maneuverProblems[i].setDesignVars(x)
-            AS(maneuverProblems[i])
-            AS.evalFunctions(maneuverProblems[i], funcs)
-            AS.checkSolutionFailure(maneuverProblems[i], funcs)
-    if MPI.COMM_WORLD.rank == 0:
-        print funcs
-
+    DVGeo.setDesignVars(x)
+    FEASolver.setDesignVars(x)
+    mp = maneuverProblems[0]
+    mp.setDesignVars(x)
+    AS(mp)
+    AS.evalFunctions(mp, funcs)
+    AS.checkSolutionFailure(mp, funcs)
+    if comm.rank == 0:
+        print('Maneuver functions')
+        pprint(funcs)
     return funcs
 
 def maneuverSens(x, funcs):
     funcsSens = {}
-    for i in range(nManeuverCases):
-        if i%nGroup == ptID:
-            AS.evalFunctionsSens(maneuverProblems[i], funcsSens)
+    mp = maneuverProblems[0]
+    AS.evalFunctionsSens(mp, funcsSens)
     return funcsSens
 
-def objCon(funcs):
-    # Assemble the uniformly weighted objective
-    funcs['obj'] = 0.0
-    for asp in cruiseProblems:
-        funcs['obj'] += (funcs[asp['drag']] * BETA + funcs['cruise0_mass']*2)/nCruiseCases
-        funcs['cruise_lift_con_'+asp.name] = funcs[asp['lift']] - CRUISE_LIFT_STAR[asp.name]
-    for asp in maneuverProblems:
-        funcs['maneuver_lift_con_'+asp.name] = funcs[asp['lift']] - MANEUVER_LIFT_STAR[asp.name]
-    if MPI.COMM_WORLD.rank == 0:
-        print funcs
+def objCon(funcs, printOK):
+    funcs['obj'] = funcs['cruise_drag'] + funcs['cruise_mass'] * 2
+    funcs['cruise_lift_con'] = funcs['cruise_lift'] - Mref
+    funcs['maneuver_lift_con'] = funcs['maneuver_lift'] - Mref * 2.5
+    if printOK:
+        pprint(funcs)
     return funcs
 
+# ==============================================================================
+# Optimization Problem Setup
+# ==============================================================================
 # Setup Optimization Problem
 optProb = Optimization('Basic Aero-Structural Optimization', MP.obj)
 
-# ---------- Design Variables/Constraints ------------
+# Add variables
 DVGeo.addVariablesPyOpt(optProb)
-if flags[structID]:
-    FEASolver.addVariablesPyOpt(optProb)
+FEASolver.addVariablesPyOpt(optProb)
+cruiseProblems[0].addVariablesPyOpt(optProb)
+maneuverProblems[0].addVariablesPyOpt(optProb)
+geoVars = DVGeo.getValues().keys()
 
-if flags[aeroID]:
-    DVCon.addConstraintsPyOpt(optProb)
-
-for asp in cruiseProblems:
-    asp.addVariablesPyOpt(optProb)
-    optProb.addCon('cruise_lift_con_'+asp.name, lower=0.0, upper=0.0,
-                   scale=1.0/M_ref)
-
-for asp in maneuverProblems:
-    asp.addVariablesPyOpt(optProb)
-    optProb.addCon('maneuver_lift_con_'+asp.name, lower=0.0, upper=0.0,
-                   scale=1.0/M_ref)
-    for j in xrange(3):
-        optProb.addCon('%s_ks%d'% (asp.name, j), upper=1.0)
+# Add constraints
+DVCon.addConstraintsPyOpt(optProb)
+FEASolver.addConstraintsPyOpt(optProb)
+optProb.addCon('cruise_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
+    wrt=['struct', 'alpha_cruise'] + geoVars)
+optProb.addCon('maneuver_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
+    wrt=['struct', 'alpha_maneuver'] + geoVars)
+for j in xrange(3):
+    optProb.addCon('maneuver_ks%d'%j, upper=1.0,
+    wrt=['struct', 'alpha_maneuver'] + geoVars)
 
 # Objective:
 optProb.addObj('obj')
 
 # The MP object needs the 'obj' and 'sens' function for each proc set,
 # the optimization problem and what the objcon function is:
-MP.addProcSetObjFunc('combined', cruiseObj)
-MP.addProcSetSensFunc('combined',cruiseSens)
-MP.addProcSetObjFunc('combined', maneuverObj)
-MP.addProcSetSensFunc('combined',maneuverSens)
+MP.addProcSetObjFunc('cruise', cruiseObj)
+MP.addProcSetSensFunc('cruise',cruiseSens)
+MP.addProcSetObjFunc('maneuver', maneuverObj)
+MP.addProcSetSensFunc('maneuver',maneuverSens)
 MP.setObjCon(objCon)
 MP.setOptProb(optProb)
 
+# ==============================================================================
+# Run optimization
+# ==============================================================================
 # Create optimizer
-opt = OPT(args.opt, options=optOptions)
+opt = OPT('snopt')
 
 # Load the optimized structural variables
-#optProb.setDVsFromHistory('struct.hst')
+optProb.setDVsFromHistory('struct.hst')
 
 # Print Optimization Problem and sparsity
-if MPI.COMM_WORLD.rank == 0:
-    print optProb
+if comm.rank == 0:
+    print(optProb)
 optProb.printSparsity()
 
 # Run Optimization
-histFile = os.path.join(outputDirectory, 'opt_hist')
-opt(optProb, MP.sens, storeHistory=histFile)
+histFile = os.path.join(outputDirectory, 'opt_hist.hst')
+MP.gcomm.barrier()
+sol = opt(optProb, MP.sens, storeHistory=histFile)
+if comm.rank == 0:
+   print(sol)
