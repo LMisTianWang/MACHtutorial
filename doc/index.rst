@@ -18,7 +18,7 @@ Although these scripts should be executable without any modifications, **we high
 As you do this, ask yourself, "Do I understand why the code is written this way?"
 This will result in a much deeper understanding of how to use the tools and eventually will help you develop code in a consistent manner.
 To make this easier for you, we provide a basic script that will create the directory structure in your desired location so that all you have to do is create the files themselves.
-To run this script, go to the machtutorial root folder and run the following:
+To run this script, go to the MACHtutorial root folder and run the following:
 ::
 
     python make_tutorial_directory.py my_tutorial
@@ -45,17 +45,17 @@ Required Software
 
 Made in the MDOlab
 ------------------
-* `ADflow <https://bitbucket.org/mdolab/adflow>`_
-* `pyGeo <https://bitbucket.org/mdolab/pygeo>`_
-* `pySpline <https://bitbucket.org/mdolab/pyspline>`_
-* `pyHyp <https://bitbucket.org/mdolab/pyhyp>`_
-* `pyWarp <https://bitbucket.org/mdolab/pywarp>`_
-* `pyLayout <https://bitbucket.org/mdolab/pylayout>`_
-* `TACS <https://bitbucket.org/mdolab/tacs>`_
-* `pyOptsparse <https://github.com/mdolab/pyoptsparse>`_
-* `cgnsUtilities <https://bitbucket.org/mdolab/cgnsutilities>`_
-* `baseclasses <https://bitbucket.org/mdolab/baseclasses>`_
-* `pyAeroStructure <https://bitbucket.org/mdolab/pyaerostructure>`_
+* `ADflow <https://github.com/mdolab/adflow>`_
+* `pyGeo <https://github.com/mdolab/pygeo>`_
+* `pySpline <https://github.com/mdolab/pyspline>`_
+* `pyHyp <https://github.com/mdolab/pyhyp>`_
+* `pyWarp <https://github.com/mdolab/pywarp>`_
+* `pyLayout <https://github.com/mdolab/pylayout>`_
+* `TACS <https://github.com/gjkennedy/tacs>`_
+* `pyOptSparse <https://github.com/mdolab/pyoptsparse>`_
+* `cgnsUtilities <https://github.com/mdolab/cgnsutilities>`_
+* `baseclasses <https://github.com/mdolab/baseclasses>`_
+* `pyAeroStructure <https://github.com/mdolab/pyaerostructure>`_
 
 External Software
 -----------------
@@ -64,7 +64,7 @@ External Software
 
 Documentation strategy
 ================================================================================
-The tutorial resides on `bitbucket.org <https://bitbucket.org/nbons/mdotutorial/downloads/>`_, but it is a living tutorial, which means that it is constantly updated with corrections and improvements.
+The tutorial resides on `GitHub <https://github.com/mdolab/MACHtutorial/>`_, but it is a living tutorial, which means that it is constantly updated with corrections and improvements.
 We invite you, especially as a new user, to take notes of the parts that you find confusing and bring them to the attention of an admin to the tutorial repository so that changes can be made.
 
 The rst files in the doc directory contain direct links to the python scripts in the tutorial directory to avoid code duplication.

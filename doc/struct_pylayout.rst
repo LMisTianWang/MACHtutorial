@@ -19,7 +19,7 @@ Navigate to the directory ``aero/geometry`` in your tutorial folder.
 Copy the following files from the MACHtutorial repository:
 ::
 
-    $ cp ~/hg/machtutorial/tutorial/aero/geometry/wing.igs .
+    $ cp MACHtutorial/tutorial/aero/geometry/wing.igs .
 
 Create the following empty runscript in the current directory:
 

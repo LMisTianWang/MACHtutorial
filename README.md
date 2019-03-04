@@ -2,9 +2,8 @@ This repository contains a step-by-step tutorial for the tools used in the MDOla
 These tools fall under the umbrella of the framework MDO of Aircraft Configurations
 with High-fidelity (MACH).
 
-Building the docs
------------------
-From the terminal, navigate to machtutorial/doc.
+## Building the docs
+From the terminal, navigate to MACHtutorial/doc.
 
 Run
     $ make html
@@ -18,6 +17,5 @@ or
 
 to open the tutorial in your browser.
 
-Required Packages to build
---------------------------
-Sphinx (1.6.6)
+## Required Packages to build
+- Sphinx (1.6.6)
