@@ -28,8 +28,8 @@ Navigate to the directory ``opt/aero`` in your tutorial folder.
 Copy the following files from the MACHtutorial repository:
 ::
 
-    $ cp ~/hg/machtutorial/tutorial/opt/ffd/ffd.xyz .
-    $ cp ~/hg/machtutorial/tutorial/aero/meshing/volume/wing_vol.cgns .
+    $ cp MACHtutorial/tutorial/opt/ffd/ffd.xyz .
+    $ cp MACHtutorial/tutorial/aero/meshing/volume/wing_vol.cgns .
 
 Create the following empty runscript in the current directory:
 

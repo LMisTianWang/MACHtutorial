@@ -31,7 +31,7 @@ Navigate to the directory ``opt/parametrization`` in your tutorial folder.
 Copy the following files from the MACHtutorial repository:
 ::
 
-    $ cp ~/hg/machtutorial/tutorial/opt/ffd/simple_ffd.py .
+    $ cp MACHtutorial/tutorial/opt/ffd/simple_ffd.py .
 
 Create the following empty runscript in the current directory:
 
