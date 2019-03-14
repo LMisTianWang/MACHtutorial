@@ -13,6 +13,7 @@ The user does not need to know Fortran to complete this tutorial, but if Python 
 Be forewarned that ignorance of Python will be cured by any lengthy interaction with the MDOlab. :)
 
 This tutorial starts from scratch and leads the user through the steps necessary to conduct aerostructural optimization of a B717 wing.
+The tutorial files are located on `GitHub <https://github.com/mdolab/MACHtutorial/>`_.
 The scripts referenced in the tutorial can be found in the tutorial directory, organized according to section.
 Although these scripts should be executable without any modifications, **we highly recommend that you create a separate directory and type out the lines of code by yourself.**
 As you do this, ask yourself, "Do I understand why the code is written this way?"
@@ -26,6 +27,10 @@ To run this script, go to the MACHtutorial root folder and run the following:
 where ``my_tutorial`` is the name of the folder in which you will build your scripts.
 The directory structures for each section of the tutorial, including all files, are displayed at the beginning of each section.
 Throughout the tutorial, we will refer to the location of your developing tutorial as ``my_tutorial``, so if you chose a different name make sure to adjust your commands accordingly.
+
+Before continuing with the tutorial, make sure that the MDOLab framework is already installed on your machine.
+If you set up your machine using an MDOLab iso, then the required packages should already be installed.
+If not, follow the instructions for installing the MDOLab framework from `scratch <http://mdolab.engin.umich.edu/doc/installInstructions/installFromScratch.html>`_.
 
 Table of Contents
 ================================================================================
@@ -56,6 +61,9 @@ Made in the MDOlab
 * `cgnsUtilities <https://github.com/mdolab/cgnsutilities>`_
 * `baseclasses <https://github.com/mdolab/baseclasses>`_
 * `pyAeroStructure <https://github.com/mdolab/pyaerostructure>`_
+
+Note: These links take you to the GitHub repositories.
+To see their documentation instead, go back to the main documentation `page <http://mdolab.engin.umich.edu/doc/index.html>`_.
 
 External Software
 -----------------
