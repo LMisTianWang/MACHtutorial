@@ -4,7 +4,7 @@
 from __future__ import print_function
 import numpy
 from baseclasses import *
-from tacs import *
+from tacs_orig import *
 from repostate import *
 from mpi4py import MPI
 

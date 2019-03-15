@@ -5,7 +5,7 @@ from __future__ import print_function
 import numpy
 from mpi4py import MPI
 from baseclasses import *
-from tacs import *
+from tacs_orig import *
 from adflow import *
 from pywarp import *
 from multipoint import *
