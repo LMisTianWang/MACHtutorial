@@ -56,7 +56,7 @@ Made in the MDOlab
 * `pyHyp <https://github.com/mdolab/pyhyp>`_
 * `pyWarp <https://github.com/mdolab/pywarp>`_
 * `pyLayout <https://github.com/mdolab/pylayout>`_
-* `TACS <https://github.com/gjkennedy/tacs>`_
+* `TACS <https://github.com/mdolab/tacs_orig>`_
 * `pyOptSparse <https://github.com/mdolab/pyoptsparse>`_
 * `cgnsUtilities <https://github.com/mdolab/cgnsutilities>`_
 * `baseclasses <https://github.com/mdolab/baseclasses>`_

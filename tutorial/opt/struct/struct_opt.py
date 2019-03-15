@@ -6,7 +6,7 @@ from pprint import pprint
 import numpy
 from mpi4py import MPI
 from baseclasses import *
-from tacs import *
+from tacs_orig import *
 from pyoptsparse import *
 from repostate import *
 
