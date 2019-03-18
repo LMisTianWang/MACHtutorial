@@ -314,6 +314,8 @@ For this case, we will define properties for the edges of the blocks which will 
     .. image:: images/icem_InitialTipParams.png
         :scale: 60
 
+    .. note:: The most commonly useful mesh-spacing laws are ``BiGeometric``, ``Poisson``, and ``Hyperbolic``. When specifying edge spacings, it is important to keep in mind that there should not be large jumps in cell sizes across edge boundaries. Large changes in cell size can result in pyHyp errors and poor quality results.
+
     Now we will specify parameters for the edges associated with the upper and lower airfoil curves at the wingtip.
     Select the upper edge at the wingtip for ``Edge`` in the ``Pre-Mesh Params`` menu.
     Specify 161 for ``Nodes`` and select ``Hyperbolic`` for the ``Mesh law``.
@@ -345,11 +347,16 @@ For this case, we will define properties for the edges of the blocks which will 
         :scale: 70
 
     This shows that we have a few poor quality elements (less than 0.5).
-    To see the elements corresponding to a bar, click on the bar.
+    To see the elements corresponding to a particular bar of the histogram, click on the bar.
     Hiding the pre-mesh and then pressing ``x`` on the keyboard should show the elements.
     Showing the pre-mesh again should help see where they lie with respect to the wing.
     These happen to be at the leading edge of the wingtip.
     Also, we need to improve the quality of the mesh as the elements transition from the upper and lower surfaces of the wing to the wingtip surface.
+
+    For surface meshes that will be used in pyHyp, the minimum quality of any cell in the mesh should be about 0.7.
+    The mesh needs to be adjusted if there are low quality cells.
+    Oftentimes, adjusting node spacing or some associations can fix low mesh quality issues.
+    However, adjusting the mesh to assure high quality can often be a bit tricky, particularly for inexperienced users.
 
     Taking a break at this point and reviewing the steps so far is recommended.
 
@@ -458,9 +465,9 @@ Exporting the mesh is done from the ``Output`` tab.
 The first step is to select the first button, with the red toolbox.
 This opens a menu where you can select the solver to export to.
 For our purposes, select ``CGNS``.
-At that point, the fourth and final button under the Output tab can be selected.
+At that point, the fourth and final button under the ``Output`` tab can be selected.
 At the prompt, click ``Open`` to use your multiblock mesh.
-Then select to use ``All`` domains of the mesh.
+Then select ``All`` domains of the mesh.
 After that a window should come up with saving options.
 All of the default options should work.
 The window is shown below.
