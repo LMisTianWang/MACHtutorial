@@ -27,7 +27,7 @@ gridFile = 'wing_vol.cgns'
 aeroOptions = {
     # I/O Parameters
     'gridFile':gridFile,
-    'outputDirectory':'output',
+    'outputDirectory':'.',
     'monitorvariables':['resrho','cl','cd'],
     'writeTecplotSurfaceSolution':True,
 
@@ -45,18 +45,20 @@ aeroOptions = {
     # ANK Solver Parameters
     'useANKSolver':True,
     'ankswitchtol':1e-1,
+    'anksecondordswitchtol':1e-2,
+    'ankcoupledswitchtol':1e-5,
 
     # NK Solver Parameters
     'useNKSolver':True,
-    'nkswitchtol':1e-4,
+    'nkswitchtol':1e-6,
 
     # Termination Criteria
-    'L2Convergence':1e-8,
+    'L2Convergence':1e-10,
     'L2ConvergenceCoarse':1e-2,
-    'nCycles':1000,
+    'nCycles':10000,
 
     # Adjoint Parameters
-    'adjointL2Convergence':1e-8,
+    'adjointL2Convergence':1e-10,
 }
 
 # Create solver
@@ -110,8 +112,8 @@ DVCon.setDVGeo(DVGeo)
 DVCon.setSurface(CFDSolver.getTriangulatedMeshSurface())
 
 # Volume constraints
-leList = [[0.1, 0, 0.001], [0.1+7.5, 0, 14]]
-teList = [[4.2, 0, 0.001], [8.5, 0, 14]]
+leList = [[0.01, 0, 0.001], [7.51, 0, 13.99]]
+teList = [[4.99, 0, 0.001], [8.99, 0, 13.99]]
 DVCon.addVolumeConstraint(leList, teList, 20, 20, lower=1.0)
 
 # Thickness constraints
@@ -200,10 +202,11 @@ optProb.printSparsity()
 #rst optimizer
 # Set up optimizer
 optOptions = {
-    'Major iterations limit':200,
-    'Major step limit':2.0,
     'Major feasibility tolerance':1.0e-4,
-    'Major optimality tolerance':5.0e-4,
+    'Major optimality tolerance':1.0e-4,
+    'Difference interval':1e-3,
+    'Hessian full memory':None,
+    'Function precision':1.0e-8
 }
 opt = OPT('snopt', options=optOptions)
 

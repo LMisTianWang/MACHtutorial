@@ -70,8 +70,13 @@ X[nbreak-1:ncols, 0] = geo_utils.linearEdge(leList[1], leList[2], ncols-nbreak+1
 X[nbreak-1:ncols, -1] = geo_utils.linearEdge(teList[1], teList[2], ncols-nbreak+1)
 
 # Finally fill in chord-wise with linear edges
-for i in xrange(ncols):
+for i in range(ncols):
     X[i, :] = geo_utils.linearEdge(X[i, 0], X[i, -1], nrows)
+
+# Boundary conditions
+ribBC = {
+    0:{'all':'123456'},
+}
 
 # ==============================================================================
 #       Generate wingbox
@@ -100,7 +105,9 @@ layout = pyLayout.Layout(geo,
     stringerSpace=stringerSpace,
     ribStiffenerSpace=ribStiffenerSpace,
     flipRibStiffner=False,
-    flipUp=False)
+    flipUp=False,
+    ribBC=ribBC,
+)
 
 # Write bdf file
 layout.finalize('wingbox.bdf')
