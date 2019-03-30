@@ -30,7 +30,7 @@ Throughout the tutorial, we will refer to the location of your developing tutori
 
 Before continuing with the tutorial, make sure that the MDOLab framework is already installed on your machine.
 If you set up your machine using an MDOLab iso, then the required packages should already be installed.
-If not, follow the instructions for installing the MDOLab framework from `scratch <http://mdolab.engin.umich.edu/doc/installInstructions/installFromScratch.html>`_.
+If not, follow the instructions for installing the MDOLab framework from `scratch <http://mdolab.engin.umich.edu/docs/installInstructions/installFromScratch.html>`_.
 
 Table of Contents
 ================================================================================
@@ -63,7 +63,7 @@ Made in the MDOlab
 * `pyAeroStructure <https://github.com/mdolab/pyaerostructure>`_
 
 Note: These links take you to the GitHub repositories.
-To see their documentation instead, go back to the main documentation `page <http://mdolab.engin.umich.edu/doc/index.html>`_.
+To see their documentation instead, go back to the main documentation `page <http://mdolab.engin.umich.edu/docs/index.html>`_.
 
 External Software
 -----------------
