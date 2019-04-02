@@ -13,7 +13,7 @@ Introduction
 There is no graphical user interface for ADflow.
 The cases are prepared with python scripts and run from the command line.
 In this section of the tutorial, we will explain the nuts and bolts of a basic ADflow runscript.
-You will find a complete introduction to ADflow in the `docs <http://mdolab.engin.umich.edu/doc/packages/adflow/doc/introduction.html>`_ .
+You will find a complete introduction to ADflow in the `docs <http://mdolab.engin.umich.edu/docs/packages/adflow/doc/introduction.html>`_ .
 
 Files
 ================================================================================
