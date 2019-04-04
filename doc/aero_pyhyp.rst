@@ -65,6 +65,7 @@ General options:
 
     ``outerFaceBC``
         Tells pyHyp to which boundary condition to apply to the outermost face of the extruded mesh.
+        Either ``farfield`` or ``overset``.
 
     ``families``
         Name given to wall surfaces. If a dictionary is submitted, each wall patch can have a different name. This can help the user to apply certain operations to specific wall patches in ADflow.
@@ -84,6 +85,10 @@ Grid parameters:
 
     ``marchDist``
         Distance of the far-field.
+
+The following options are related to the algorithms that are used to generate the mesh and usually these default values do not need to be modified.
+More information can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/docs/packages/pyhyp/doc/index.html>`_.
+For example, ``epsE`` may be of interest when dealing with concave corners.
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
     :start-after: #rst pseudo

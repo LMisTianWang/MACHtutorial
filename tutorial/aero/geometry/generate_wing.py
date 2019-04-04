@@ -14,9 +14,9 @@ z = [0.0, 14.0]
 offset = numpy.zeros((naf,2)) # x-y offset applied to airfoil position before scaling
 
 # Airfoil rotations
-rot_x = [0.,0.,0.]
-rot_y = [0.,0.,0.]
-rot_z = [0.,0.,0.]
+rot_x = [0.,0.]
+rot_y = [0.,0.]
+rot_z = [0.,0.]
 
 # Airfoil scaling
 chord = [5.0, 1.5] # chord lengths
