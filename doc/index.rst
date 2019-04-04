@@ -61,6 +61,7 @@ Made in the MDOlab
 * `cgnsUtilities <https://github.com/mdolab/cgnsutilities>`_
 * `baseclasses <https://github.com/mdolab/baseclasses>`_
 * `pyAeroStructure <https://github.com/mdolab/pyaerostructure>`_
+* `multipoint <https://github.com/mdolab/multipoint.git>`_
 
 Note: These links take you to the GitHub repositories.
 To see their documentation instead, go back to the main documentation `page <http://mdolab.engin.umich.edu/docs/index.html>`_.

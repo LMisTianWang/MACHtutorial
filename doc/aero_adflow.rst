@@ -57,6 +57,7 @@ The `I/O Parameters` include the mesh file, the output directory, and the variab
 Under `Solver Parameters`, you can choose a basic solver (DADI or Runge Kutta) and set the CFL and multigrid parameters.
 Additionally, the Approximate Newton-Krylov (ANK) and Newton-Krylov (NK) solvers can be used to speed up convergence of the solver.
 Finally, we can terminate the solver based on relative convergence of the norm of the residuals or maximum number of iterations.
+We strongly recommend going over the descriptions and tips on solvers and solver options in the ADflow `solvers docs <http://mdolab.engin.umich.edu/docs/packages/adflow/doc/solvers.html>`_.
 
 Create solver
 -------------
