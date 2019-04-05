@@ -1,6 +1,7 @@
 #rst Import libraries
 import numpy
 from pygeo import DVGeometry
+from pywarp import MBMesh
 
 #rst Create DVGeometry object
 FFDFile = 'ffd.xyz'
@@ -41,7 +42,11 @@ DVGeo.addGeoDVLocal('local', lower=-0.5, upper=0.5, axis='y', scale=1)
 DVGeo.addGeoDVSectionLocal('slocal', secIndex='k', axis=1, lower=-0.5, upper=0.5, scale=1)
 
 #rst Embed points
-coords = numpy.array([0, 0, 0])
+gridFile = 'wing_vol.cgns'
+meshOptions = {'gridFile':gridFile}
+mesh = MBMesh(options=meshOptions)
+coords = mesh.getSurfaceCoordinates()
+
 DVGeo.addPointSet(coords, 'coords')
 
 #rst Change dvs
@@ -55,3 +60,4 @@ DVGeo.setDesignVars(dvDict)
 #rst Update
 DVGeo.update('coords')
 DVGeo.writePlot3d('ffd_deformed.xyz')
+DVGeo.writePointSet('coords', 'surf')

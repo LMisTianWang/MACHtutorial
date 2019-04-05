@@ -33,6 +33,11 @@ Copy the following files from the MACHtutorial repository:
 
     $ cp MACHtutorial/tutorial/opt/ffd/simple_ffd.py .
 
+Also copy the volume mesh from the MACHtutorial repository:
+::
+
+    $ cp MACHtutorial/tutorial/aero/analysis/wing_vol.cgns .
+
 Create the following empty runscript in the current directory:
 
 - ``parametrize.py``
@@ -102,6 +107,7 @@ Import libraries
 
 As mentioned in the introduction, the geometric parametrization code is housed in the DVGeometry class which resides in the pyGeo module.
 So to begin with, we import DVGeometry from pyGeo.
+We also import pyWarp so that we can use one of its functions to obtain surface coordinates from our volume mesh.
 
 Instantiate DVGeometry
 ----------------------
@@ -231,7 +237,7 @@ The following snippets of code allow us to manually change the design variables 
 Embed points
 ~~~~~~~~~~~~
 First we have to embed at least one point set in the FFD.
-Normally, ADflow automatically embeds the surface mesh nodes in the FFD, but here we will embed a single point at the origin.
+Normally, ADflow automatically embeds the surface mesh nodes in the FFD, but here we will embed surface coordinates obtained using pyWarp's ``getSurfaceCoordinates`` function (just for this example without ADflow).
 
 .. literalinclude:: ../tutorial/opt/ffd/parametrize.py
     :start-after: #rst Embed points
@@ -251,6 +257,7 @@ Write deformed FFD to file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 The ``update`` function actually computes the new shape of the FFD and the new locations of the embedded points.
 We can view the current shape of the FFD by calling ``writePlot3d``.
+We can also view the updated surface coordinates by calling ``writePointSet``.
 
 .. literalinclude:: ../tutorial/opt/ffd/parametrize.py
     :start-after: #rst Update
@@ -262,7 +269,13 @@ Once you have generated the FFD with ``simple_ffd.py`` you can try out different
 
     $ python parametrize.py
 
-You can view the result in Tecplot.
+You can view the results in Tecplot.
+The following shows the deformed (darker spheres) and undeformed surface coordinates.
+
+.. image:: images/ffd_deformed_surf_coords.png
+   :scale: 25
+   :align: center
+
 Experiment with creating new global design variables like span or sweep.
 
 .. centered::
