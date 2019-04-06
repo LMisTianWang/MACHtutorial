@@ -270,7 +270,14 @@ Once you have generated the FFD with ``simple_ffd.py`` you can try out different
     $ python parametrize.py
 
 You can view the results in Tecplot.
-The following shows the deformed (darker spheres) and undeformed surface coordinates.
+
+The following shows the deformed (darker points) and undeformed FFD grids (visualized by selecting ``Scatter`` and ``Mesh`` under ``Show zone layers`` in tecplot, then changing the ``Symbol shape`` to ``Sphere`` under ``Zone Style...``).
+
+.. image:: images/ffd_deformed_ffd.png
+   :scale: 25
+   :align: center
+
+The following shows the deformed (darker points) and undeformed surface coordinates.
 
 .. image:: images/ffd_deformed_surf_coords.png
    :scale: 25
