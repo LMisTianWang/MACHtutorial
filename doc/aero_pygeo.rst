@@ -76,7 +76,7 @@ The coordinates of the airfoil are contained in the file ``rae2822.dat``.
 The position, orientation, and scaling of the airfoil sections are stipulated in lists corresponding with the original airfoil data list.
 The leading edge of each airfoil is positioned in space based on the values in the x, y, and z lists.
 An offset in the x-y plane can be added to this position with the ``offset`` array before chord scaling is applied.
-In this case, we don't want to apply any rotation or offset.
+In this case, we don't want to apply any rotation (the rotation options shown below would be for rotation about the airfoil leading edge points and the units are degrees) or offset.
 
 .. literalinclude:: ../tutorial/aero/geometry/generate_wing.py
    :start-after: #rst Wing definition
@@ -89,7 +89,7 @@ Call pyGeo
    :end-before: #rst Write output files
 
 A detailed explanation of each argument is available in the `pyGeo docs <http://mdolab.engin.umich.edu/docs/packages/pygeo/doc/pyGeo.html>`_.
-The final four options stipulate a rounded wingtip and a blunt trailing edge with a square tip and a thickness of 0.25 inches.
+The final four options stipulate a rounded wingtip and a blunt trailing edge with a square tip (i.e., a square face at the trailing edge instead of a rounded face) and a thickness of 0.25 inches.
 
 Write output files
 ------------------

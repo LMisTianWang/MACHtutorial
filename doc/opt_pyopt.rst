@@ -201,7 +201,7 @@ pyOptSparse comes with a simple GUI to view the optimization history called OptV
 You can run it with the command:
 ::
 
-    $ python <path-to-pyoptsparse>/postprocessing/OptView.py opt.hist
+    $ python <path-to-pyoptsparse>/postprocessing/OptView.py opt.hst
 
 .. centered::
     :ref:`opt_overview` | :ref:`opt_ffd`
