@@ -10,7 +10,7 @@ nTwist = nRefAxPts - 1
 
 # Set up global design variables
 def twist(val, geo):
-    for i in xrange(1, nRefAxPts):
+    for i in range(1, nRefAxPts):
         geo.rot_z['wing'].coef[i] = val[i-1]
 
 DVGeo.addGeoDVGlobal(dvName='twist', value=[0]*nTwist, func=twist,

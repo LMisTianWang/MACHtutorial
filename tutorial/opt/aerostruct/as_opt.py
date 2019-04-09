@@ -275,7 +275,7 @@ optProb.addCon('cruise_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
     wrt=['struct', 'alpha_cruise'] + geoVars)
 optProb.addCon('maneuver_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
     wrt=['struct', 'alpha_maneuver'] + geoVars)
-for j in xrange(3):
+for j in range(3):
     optProb.addCon('maneuver_ks%d'%j, upper=1.0,
     wrt=['struct', 'alpha_maneuver'] + geoVars)
 

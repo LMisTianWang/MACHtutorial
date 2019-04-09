@@ -9,7 +9,7 @@ newY=data[:,1].copy()
 ndim=x.shape[0]
 
 airfoil3d = np.zeros((ndim,2,3))
-for j in xrange(2):
+for j in range(2):
     airfoil3d[:,j,0] = x[:]
     airfoil3d[:,j,1] = newY[:]
 airfoil3d[:,0,2] = 0.0
@@ -18,10 +18,10 @@ airfoil3d[:,1,2] = 1.0
 fsam = open('new.xyz','w')
 fsam.write(str(1)+'\n')
 fsam.write(str(ndim)+' '+str(2)+' '+str(1)+'\n')
-for l in xrange(3):
-    for k in xrange(1):
-        for j in xrange(2):
-            for i in xrange(ndim):
+for l in range(3):
+    for k in range(1):
+        for j in range(2):
+            for i in range(ndim):
                 fsam.write('%.15f\n'%(airfoil3d[i,j,l]))
 fsam.close()
 
