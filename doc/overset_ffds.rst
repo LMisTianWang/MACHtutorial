@@ -5,7 +5,7 @@
 .. _overset_ffds:
 
 ******************
-Creating FFD grids
+Creating FFD Grids
 ******************
 
 Introduction

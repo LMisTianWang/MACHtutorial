@@ -11,7 +11,7 @@ Checking the Overset Mesh
 Introduction
 ================================================================================
 Getting different meshes that are overset to work well together can be tricky.
-Here we will show how ADflow can be used to check if there will be any problems with connectivities.
+Here we will show how ADflow can be used to check if there will be any problems with the hole-cutting algorithm and connectivities, and also to visualize which cells are compute cells, interpolate cells, blanked cells, and flooded cells.
 
 Files
 ================================================================================
@@ -29,7 +29,7 @@ Create the following empty runscript in the current directory:
 Dissecting the ADflow runscript
 ================================================================================
 Open the file ``ihc_check.py`` with your favorite text editor.
-Then copy the following ainto this file.
+Then copy the following into this file.
 
 
 .. literalinclude:: ../tutorial/overset_tutorial/ihc_check/ihc_check.py

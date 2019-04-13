@@ -1,6 +1,5 @@
 #rst Imports
 from pyhyp import pyHyp
-
 #rst general
 
 # Front wing vol mesh
@@ -50,8 +49,6 @@ options_front= {
     'kspMaxIts': 1500,
     'kspSubspaceSize':50
     }
-
-
 
 hyp = pyHyp(options=options_front)
 hyp.run()

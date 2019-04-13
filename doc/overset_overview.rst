@@ -11,7 +11,7 @@ Part 6: Analysis and Optimization with Overset Meshes
 
 Overview
 ================================================================================
-In this part of the tutorial, we will look at a tandem-wing case to learn how to generate overset meshes and carry out optimizations with multiple FFDs and surfaces.
+In this part of the tutorial, we will look at a tandem-wing case to learn how to generate overset meshes and carry out aerodynamic optimizations with multiple surfaces and FFDs.
 
 .. image:: images/overset_cp.png
    :scale: 25
@@ -54,6 +54,7 @@ Directory Structure
     |-- mesh
     |   |-- surface
     |       |-- wing.cgns
+    |       |-- icem_proj_files
     |   |-- volume
     |       |-- wing.cgns
     |       |-- run_pyhyp.py
@@ -68,9 +69,14 @@ Directory Structure
     |-- analysis
     |   |-- aero_tandem.py
     |   |-- overset_combined.cgns
+    |-- ffd
+    |   |-- tandem_ffds.py
     |-- opt
     |   |-- aero_opt_tandem.py
     |   |-- overset_combined.cgns
+    |   |-- ffd_front_wing.cgns
+    |   |-- ffd_back_wing.cgns
+    |   |-- ffd_global.cgns
 
 .. centered::
     :ref:`intro` | :ref:`overset_geom`

@@ -10,12 +10,14 @@ args = parser.parse_args()
 
 # Generate background mesh
 wingGrid = cgns_utils.readGrid(args.inFile)
+
 dh = 0.04
 hExtra = 20*0.64
 nExtra = 25
 sym = 'z'
 mgcycle = 3
 backgroundFile = 'background_tandem.cgns'
+
 wingGrid.simpleOCart(dh, hExtra, nExtra, sym, mgcycle, backgroundFile)
 backgroundGrid = cgns_utils.readGrid(backgroundFile)
 

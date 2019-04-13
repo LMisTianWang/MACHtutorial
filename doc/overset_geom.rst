@@ -13,13 +13,15 @@ Introduction
 First we will generate a simple rectangular wing geometry using the same process covered earlier in the :ref:`aero_pygeo` tutorial, but with a different planform and airfoil.
 Then we will generate a surface mesh using the same process covered earlier in the :ref:`aero_icem` tutorial.
 
+.. note:: At this point we expect that you have completed at least :ref:`aero_overview` and :ref:`opt_overview` (up to and including :ref:`opt_aero`).
+
 Files for geometry generation
 ================================================================================
 Navigate to the directory ``overset_tutorial/geometry/`` in your tutorial folder.
 Copy the following files from the MACHtutorial repository:
 ::
 
-    $ cp MACHtutorial/tutorial/overset_tutorial/geometry/NACA642A015.dat .
+    $ cp ../../../tutorial/overset_tutorial/geometry/NACA642A015.dat .
 
 Create the following empty runscript in the current directory:
 
@@ -43,6 +45,7 @@ After copying ``NACA642A015.dat`` to your ``overset_tutorial/geometry`` folder a
 
     $ python generate_wing.py
 
+This should create ``wing.tin`` and ``wing.dat``.
 You can open ``wing.dat`` in Tecplot to view the wing surface.
 
 .. image:: images/overset_geom.png
