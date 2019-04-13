@@ -1,5 +1,6 @@
+#rst start
 import numpy
-#rst Dimensions
+
 # Bounding box for root airfoil
 x_root_range = [-0.02, 0.27]
 y_root_range = [-0.05, 0.05]
@@ -14,7 +15,7 @@ z_tip = 0.67
 nX = 6	# streamwise
 nY = 2	# perpendicular to wing planform
 nZ = 8	# spanwise
-#rst Compute
+
 # Compute grid points
 span_dist = numpy.linspace(0, 1, nZ)**0.8
 z_sections = span_dist*(z_tip - z_root) + z_root
@@ -33,7 +34,7 @@ for k in range(nZ):
         Y[row,:] = numpy.ones(nX)*y_coords[j,k]
         Z[row,:] = numpy.ones(nX)*z_sections[k]
         row += 1
-#rst Write
+
 # Write FFD to file
 filename = "ffd_front_wing.xyz"
 f = open(filename, 'w')
@@ -45,10 +46,12 @@ for set in [X,Y,Z]:
         f.write('\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\n' % vals)
 f.close()
 
+#rst front_end
+
+# displacement of the back wing relative to the front wing
 delta_x = 1.
 delta_y = .5
 
-#rst Dimensions
 # Bounding box for root airfoil
 x_root_range = [-0.02 + delta_x, 0.27 + delta_x]
 y_root_range = [-0.05 + delta_y, 0.05 + delta_y]
@@ -63,7 +66,7 @@ z_tip = 0.67
 nX = 6	# streamwise
 nY = 2	# perpendicular to wing planform
 nZ = 8	# spanwise
-#rst Compute
+
 # Compute grid points
 span_dist = numpy.linspace(0, 1, nZ)**0.8
 z_sections = span_dist*(z_tip - z_root) + z_root
@@ -82,7 +85,7 @@ for k in range(nZ):
         Y[row,:] = numpy.ones(nX)*y_coords[j,k]
         Z[row,:] = numpy.ones(nX)*z_sections[k]
         row += 1
-#rst Write
+
 # Write FFD to file
 filename = "ffd_back_wing.xyz"
 f = open(filename, 'w')
@@ -94,9 +97,11 @@ for set in [X,Y,Z]:
         f.write('\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\n' % vals)
 f.close()
 
+#rst back_end
+
+# some extra space for the outer global FFD
 extra_space = 0.1
 
-#rst Dimensions
 # Bounding box for root airfoil
 x_root_range = [-0.02 - extra_space, 0.27 + delta_x + extra_space]
 y_root_range = [-0.05 - extra_space, 0.05 + delta_y + extra_space]
@@ -111,7 +116,7 @@ z_tip = 0.67 + extra_space
 nX = 6	# streamwise
 nY = 2	# perpendicular to wing planform
 nZ = 8	# spanwise
-#rst Compute
+
 # Compute grid points
 span_dist = numpy.linspace(0, 1, nZ)**0.8
 z_sections = span_dist*(z_tip - z_root) + z_root
@@ -130,7 +135,7 @@ for k in range(nZ):
         Y[row,:] = numpy.ones(nX)*y_coords[j,k]
         Z[row,:] = numpy.ones(nX)*z_sections[k]
         row += 1
-#rst Write
+
 # Write FFD to file
 filename = "ffd_global.xyz"
 f = open(filename, 'w')
@@ -141,3 +146,4 @@ for set in [X,Y,Z]:
         vals = tuple(row)
         f.write('\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\t%3.8f\n' % vals)
 f.close()
+#rst end

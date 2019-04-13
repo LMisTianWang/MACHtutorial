@@ -1,3 +1,5 @@
+#rst start
+
 from __future__ import print_function
 from mpi4py import MPI
 from baseclasses import AeroProblem
@@ -53,7 +55,9 @@ aeroOptions = {
 CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
 CFDSolver.addLiftDistribution(200, 'z')
                  
-ap = AeroProblem(name='fc', mach=0.3, altitude=1000, areaRef=0.3072, alpha=3., chordRef=0.24, evalFuncs = ['cl', 'cd'])
+ap = AeroProblem(name='fc', mach=0.3, altitude=1000, areaRef=0.64*0.24*2, alpha=3., chordRef=0.24, evalFuncs = ['cl', 'cd'])
+
+#rst initial
 
 # Add angle of attack variable
 ap.addDV('alpha', value=3., lower=0, upper=10.0, scale=0.1)
@@ -80,6 +84,8 @@ DVGeo_GLOBAL = DVGeometry(FFDFile_GLOBAL)
 DVGeo_GLOBAL.addChild(DVGeo_front)
 DVGeo_GLOBAL.addChild(DVGeo_back)
 
+#rst dvgeos
+
 # Set up global design variables
 def twist_front(val, geo):
     for i in range(1, nRefAxPts_front):
@@ -102,6 +108,8 @@ DVGeo_back.addGeoDVLocal('local_back', lower=-0.05, upper=0.05, axis='y', scale=
 
 # Add DVGeo object to CFD solver
 CFDSolver.setDVGeo(DVGeo_GLOBAL)
+
+#rst dvs
 
 DVCon = DVConstraints(name = 'con')
 DVCon.setDVGeo(DVGeo_GLOBAL)
@@ -134,6 +142,8 @@ DVCon.addLeTeConstraints(0, 'iHigh', childIdx=1)
 
 if comm.rank == 0:
     DVCon.writeTecplot('constraints.dat')
+
+#rst dvcons
 
 meshOptions = {'gridFile':gridFile, 'warpType':'algebraic',}
 mesh = MBMesh(options=meshOptions, comm=comm)
@@ -213,3 +223,5 @@ opt = OPT('snopt', options=optOptions)
 sol = opt(optProb, MP.sens, storeHistory='opt.hst')
 if comm.rank == 0:
    print(sol)
+
+#rst end

@@ -1,6 +1,6 @@
 
 .. centered::
-    :ref:`overset_volume_meshes` | :ref:`intro`
+    :ref:`overset_volume_meshes` | :ref:`overset_analysis`
 
 .. _overset_ihcc:
 
@@ -70,4 +70,4 @@ Now check all zones with ``background`` and unselect all zones with ``wing_vols_
   :scale: 25
 
 .. centered::
-    :ref:`overset_volume_meshes` | :ref:`intro`
+    :ref:`overset_volume_meshes` | :ref:`overset_analysis`
