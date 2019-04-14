@@ -43,7 +43,7 @@ Later, in the optimization runscript, we will set the wing FFDs as children FFDs
 This is one approach for setting up the FFDs for multiple surfaces.
 
 This global grid must be large enough that the child FFD grid points stay inside it.
-For this case, the grid actually just needs to be 4 corner points (instead of the 2 x 6 x 8 grid that we create here by recycling the same code used above, but it doesn't matter if we have more points).
+For this case, the grid actually just needs to be 4 corner points (instead of the 6 x 2 x 8 grid that we create here by recycling the same code used above, but it doesn't matter if we have more points).
 
 .. literalinclude:: ../tutorial/overset_tutorial/ffd/tandem_ffds.py
   :start-after: #rst back_end

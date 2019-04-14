@@ -27,7 +27,7 @@ Once we generate the three meshes, all we need to do is combine them into one CG
 
 Files
 ================================================================================
-Navigate to the directory ``overset_tutorial/meshing/volume`` in your tutorial folder.
+Navigate to the directory ``overset_tutorial/mesh/volume`` in your tutorial folder.
 Copy the following files from the surface meshing directory:
 ::
 

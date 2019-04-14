@@ -19,7 +19,7 @@ Navigate to the directory ``overset_tutorial/analysis`` in your tutorial folder.
 Copy the following files from the volume meshing directory:
 ::
 
-    $ cp ../volume/overset_combined.cgns .
+    $ cp ../mesh/volume/overset_combined.cgns .
 
 Create the following empty runscript in the current directory:
 
@@ -62,6 +62,14 @@ Run the script:
 
     $ mpirun -np 4 python aero_tandem.py
 
+Now let's load the .dat file with the lift distributions into Tecplot.
+Load ``fc_000_lift.dat`` then click on ``Mapping Style``.
+Check the boxes under ``Show Map`` for four rows and change the ``Y-Axis variable`` for three of them to ``Normalized Lift`` and one of them to ``Ellptical``.
+For the three with ``Normalized Lift`` change the ``Zone`` so that one shows the font wing, one shows the back wing, and one shows all walls.
+We should get something that looks like the following (ctrl+F to fit the curves in the frame) without the labels.
+
+.. image:: images/overset_analysis_lift_dist.png
+  :scale: 60
 
 .. centered::
     :ref:`overset_ihcc` | :ref:`overset_ffds`

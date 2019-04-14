@@ -1,6 +1,7 @@
 #rst start
 import numpy
 
+# Front wing
 # Bounding box for root airfoil
 x_root_range = [-0.02, 0.27]
 y_root_range = [-0.05, 0.05]
@@ -102,12 +103,12 @@ f.close()
 # some extra space for the outer global FFD
 extra_space = 0.1
 
-# Bounding box for root airfoil
+# Bounding box for root
 x_root_range = [-0.02 - extra_space, 0.27 + delta_x + extra_space]
 y_root_range = [-0.05 - extra_space, 0.05 + delta_y + extra_space]
 z_root = -0.01 - extra_space
 
-# Bounding box for tip airfoil
+# Bounding box for tip
 x_tip_range = [-0.02 - extra_space, 0.27 + delta_x + extra_space]
 y_tip_range = [-0.05 - extra_space, 0.05 + delta_y + extra_space]
 z_tip = 0.67 + extra_space

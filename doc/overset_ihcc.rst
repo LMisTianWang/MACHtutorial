@@ -19,7 +19,7 @@ Navigate to the directory ``overset_tutorial/ihc_check`` in your tutorial folder
 Copy the following files from the volume meshing directory:
 ::
 
-    $ cp ../volume/overset_combined.cgns .
+    $ cp ../mesh/volume/overset_combined.cgns .
 
 Create the following empty runscript in the current directory:
 

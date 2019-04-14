@@ -25,12 +25,7 @@ aeroOptions = {
     'equationType':'RANS',
 
     # Solver Parameters
-    'smoother':'dadi',
-    'CFL':1.5,
-    'CFLCoarse':1.25,
     'MGCycle':'sg',
-    'MGStartLevel':-1,
-    'nCyclesCoarse':250,
 
     # ANK Solver Parameters
     'useANKSolver':True,
@@ -53,6 +48,11 @@ aeroOptions = {
 
 # Create solver
 CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
+# Save the lift distribution for the front wing
+CFDSolver.addLiftDistribution(200, 'z', groupName='wing_front')
+# Save the lift distribution for the back wing
+CFDSolver.addLiftDistribution(200, 'z', groupName='wing_back')
+# Save the total lift distribution
 CFDSolver.addLiftDistribution(200, 'z')
                  
 ap = AeroProblem(name='fc', mach=0.3, altitude=1000, areaRef=0.64*0.24*2, alpha=3., chordRef=0.24, evalFuncs = ['cl', 'cd'])
@@ -66,7 +66,7 @@ ap.addDV('alpha', value=3., lower=0, upper=10.0, scale=0.1)
 FFDFile_front = 'ffd_front_wing.xyz'
 DVGeo_front = DVGeometry(FFDFile_front, child=True)
 
-# Create reference axis
+# Create reference axis for the front wing
 nRefAxPts_front = DVGeo_front.addRefAxis('wing_front', xFraction=0.25, alignIndex='k')
 nTwist_front = nRefAxPts_front - 1
 
@@ -74,7 +74,7 @@ nTwist_front = nRefAxPts_front - 1
 FFDFile_back = 'ffd_back_wing.xyz'
 DVGeo_back = DVGeometry(FFDFile_back, child=True)
 
-# Create reference axis
+# Create reference axis for the back wing
 nRefAxPts_back = DVGeo_back.addRefAxis('wing_back', xFraction=0.25, alignIndex='k')
 nTwist_back = nRefAxPts_back - 1
 
@@ -118,10 +118,12 @@ DVCon.setDVGeo(DVGeo_GLOBAL)
 DVCon.setSurface(CFDSolver.getTriangulatedMeshSurface())
 
 # Volume constraints
+# For the front wing
 leList_front = [[0.01, 0, 0.001], [0.01, 0, 0.639]]
 teList_front = [[0.239, 0, 0.001], [0.239, 0, 0.639]]
 DVCon.addVolumeConstraint(leList_front, teList_front, 20, 20, lower=1.0)
 
+# For the back wing
 delta_x = 1.
 delta_y = 0.5
 
