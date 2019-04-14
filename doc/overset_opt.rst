@@ -90,5 +90,10 @@ Run the script:
 This will probably take over a day to run on a 4 core desktop computer for the meshes used in this tutorial.
 But after a few iterations you can used the saved CGNS solution files and Tecplot to see how the geometry is being changed by the optimizer.
 
+The final optimized lift distributions for this problem will look like the following:
+
+.. image:: images/overset_opt_lift_dist.png
+  :scale: 60
+
 .. centered::
     :ref:`overset_ffds` | :ref:`intro`
