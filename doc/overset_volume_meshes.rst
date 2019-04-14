@@ -22,12 +22,12 @@ Here is a view of the symmetry plane (looking in the positive-z direction) for w
 
 Once we generate the three meshes, all we need to do is combine them into one CGNS file and ADflow will take care of the connectivities and flooding (when we run an analysis or optimization).
 
-.. note:: TODO: We need to add more background information on overset meshes. In the meantime, see the ``overset.pdf`` slides in ``MACHtutorial/tutorial/overset_tutorial/``.
+.. note:: TODO: We need to add more background information on overset meshes. In the meantime, see the ``overset.pdf`` slides in ``MACHtutorial/tutorial/oversetopt/``.
 
 
 Files
 ================================================================================
-Navigate to the directory ``overset_tutorial/mesh/volume`` in your tutorial folder.
+Navigate to the directory ``oversetopt/mesh/volume`` in your tutorial folder.
 Copy the following files from the surface meshing directory:
 ::
 
@@ -44,14 +44,14 @@ Then copy the code from each of the following sections into this file.
 
 Import libraries
 ----------------
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/run_pyhyp.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/run_pyhyp.py
    :start-after: #rst Imports
    :end-before: #rst general
 
 Options for the front wing
 --------------------------
 
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/run_pyhyp.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/run_pyhyp.py
     :start-after: #rst general
     :end-before: #rst grid
 
@@ -60,7 +60,7 @@ Instead of using a farfield boundary condition, we set the ``outerFaceBC`` to ``
 Since we have two wings, we also want to give them different family names that can be used to distinguish between them later for options such as outputting lift distributions from ADflow.
 Next we specify some grid parameters.
 
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/run_pyhyp.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/run_pyhyp.py
     :start-after: #rst grid
     :end-before: #rst rest
 
@@ -68,13 +68,13 @@ Here, we specify a relatively small ``marchDist`` because we only need a small v
 For this example, we also coarsen the surface mesh before extruding using the ``coarsen`` option.
 Next, we have the algorithm-specific options and commands to generate and output the mesh for the front wing.
 
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/run_pyhyp.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/run_pyhyp.py
     :start-after: #rst rest
     :end-before: #rst front_end
 
 Next, we create another volume mesh (same surface file and options but with a different family name) that we will use for the back wing.
 
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/run_pyhyp.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/run_pyhyp.py
     :start-after: #rst front_end
     :end-before: #rst end
 
@@ -140,7 +140,7 @@ Generating the background mesh
 We will further use cgns_utils to generate a background mesh around the wing meshes and then combine all the meshes.
 We can use the following script to generate a background mesh.
 
-.. literalinclude:: ../tutorial/overset_tutorial/mesh/volume/generate_overset.py
+.. literalinclude:: ../tutorial/oversetopt/mesh/volume/generate_overset.py
     :start-after: #rst begin
     :end-before: #rst end
 

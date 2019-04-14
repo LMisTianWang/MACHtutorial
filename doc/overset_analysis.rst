@@ -15,7 +15,7 @@ Now we will run a flow simulation with ADflow.
 
 Files
 ================================================================================
-Navigate to the directory ``overset_tutorial/analysis`` in your tutorial folder.
+Navigate to the directory ``oversetopt/analysis`` in your tutorial folder.
 Copy the following files from the volume meshing directory:
 ::
 
@@ -31,7 +31,7 @@ Dissecting the ADflow runscript
 Open the file ``aero_tandem.py`` with your favorite text editor.
 Then copy the following code blocks into this file.
 
-.. literalinclude:: ../tutorial/overset_tutorial/analysis/aero_tandem.py
+.. literalinclude:: ../tutorial/oversetopt/analysis/aero_tandem.py
    :start-after: #rst start
    :end-before: #rst end_options
 
@@ -45,13 +45,13 @@ Next, we use the following options to save separate lift distributions for the f
 The ``groupName`` is specified as the family name given to the meshes in :ref:`overset_volume_meshes`.
 When the ``groupName`` is not specified, all the wall surfaces are used by default (this gives us the total lift distribution).
 
-.. literalinclude:: ../tutorial/overset_tutorial/analysis/aero_tandem.py
+.. literalinclude:: ../tutorial/oversetopt/analysis/aero_tandem.py
    :start-after: #rst end_options
    :end-before: #rst end_dist
 
 Finally, we call the solver and output the results.
 
-.. literalinclude:: ../tutorial/overset_tutorial/analysis/aero_tandem.py
+.. literalinclude:: ../tutorial/oversetopt/analysis/aero_tandem.py
    :start-after: #rst end_dist
    :end-before: #rst end
 

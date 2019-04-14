@@ -15,7 +15,7 @@ Here we will show how ADflow can be used to check if there will be any problems 
 
 Files
 ================================================================================
-Navigate to the directory ``overset_tutorial/ihc_check`` in your tutorial folder.
+Navigate to the directory ``oversetopt/ihc_check`` in your tutorial folder.
 Copy the following files from the volume meshing directory:
 ::
 
@@ -32,7 +32,7 @@ Open the file ``ihc_check.py`` with your favorite text editor.
 Then copy the following into this file.
 
 
-.. literalinclude:: ../tutorial/overset_tutorial/ihc_check/ihc_check.py
+.. literalinclude:: ../tutorial/oversetopt/ihc_check/ihc_check.py
    :start-after: #rst start
    :end-before: #rst end
 

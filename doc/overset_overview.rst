@@ -47,7 +47,7 @@ Directory Structure
 ================================================================================
 ::
 
-    overset_tutorial
+    oversetopt
     |-- geometry
     |   |-- generate_wing.py
     |   |-- NACA642A015.dat
