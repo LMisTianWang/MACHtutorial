@@ -34,11 +34,17 @@ aeroOptions = {
     'nCycles':10000,
 
     # Zipper mesh option
-    'usezippermesh':True
+    'debugzipper':False,
+    'usezippermesh':True,
+    'nrefine':10, # number of times to run IHC cycle
+    'nearwalldist':0.1,
+    'oversetpriority':oversetpriority
 }
 
 # Create solver
 CFDSolver = ADFLOW(options=aeroOptions)
+
+#rst end_options
 
 # Save the lift distribution for the front wing
 CFDSolver.addLiftDistribution(200, 'z', groupName='wing_front')
@@ -46,6 +52,8 @@ CFDSolver.addLiftDistribution(200, 'z', groupName='wing_front')
 CFDSolver.addLiftDistribution(200, 'z', groupName='wing_back')
 # Save the total lift distribution
 CFDSolver.addLiftDistribution(200, 'z')
+
+#rst end_dist
 
 ap = AeroProblem(name='fc', mach=0.3, altitude=1000, areaRef=0.64*0.24*2, alpha=3., chordRef=0.24, evalFuncs = ['cl', 'cd'])
 CFDSolver(ap)

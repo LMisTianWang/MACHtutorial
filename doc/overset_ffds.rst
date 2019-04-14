@@ -38,12 +38,12 @@ Then we will use the same approach to create a grid for the back wing.
   :start-after: #rst front_end
   :end-before: #rst back_end
 
-Finally, we will create a large grid that will envelope both grids.
-Later, in the optimization run script, we will set the wing FFDs as children FFDs to this larger global FFD.
+Finally, we will create a large grid that envelopes the two grids created for the wings.
+Later, in the optimization runscript, we will set the wing FFDs as children FFDs to this larger global FFD.
 This is one approach for setting up the FFDs for multiple surfaces.
 
-This global grid should be large enough that child FFD grid points stay inside it.
-For this case, the grid actually just needs to be 4 corner points (instead of the 2 x 6 x 8 grid that we use here using the same code used above, but it won't matter if we have more).
+This global grid must be large enough that the child FFD grid points stay inside it.
+For this case, the grid actually just needs to be 4 corner points (instead of the 2 x 6 x 8 grid that we create here by recycling the same code used above, but it doesn't matter if we have more points).
 
 .. literalinclude:: ../tutorial/overset_tutorial/ffd/tandem_ffds.py
   :start-after: #rst back_end
@@ -56,7 +56,7 @@ Run the script:
 
     $ python tandem_ffds.py
 
-Loading the grids in tecplot should look something like this with translucency.
+Loading the three grids in Tecplot should look something like this with translucency.
 
 .. image:: images/overset_ffds.png
   :scale: 60
