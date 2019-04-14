@@ -36,6 +36,21 @@ Then copy the following into this file.
    :start-after: #rst start
    :end-before: #rst end
 
+This will not actually run a flow simulation, it will just carry out the setup.
+Adding ``'blank'`` to the ``volumevariables`` and ``surfacevariables`` (which tells ADflow which variables to save in the results) will allow us to see which cells are compute, interpolate, blanked, and flooded cells.
+
+There are some new parameters here related to overset meshes that we have not seen before.
+
+  - The ``usezippermesh`` option is ``True`` by default so we set it to ``False`` here to skip the zipper mesh generation, because it may crash if the hole cutting does not work. A zipper mesh provides a watertight surface for force integration in the region where cells overlap.
+
+  - The ``nrefine`` option is set to 10 (this is the default). This option specifies the number of times the implicit hole cutting algorithm is run.
+
+  - The ``nearwalldist`` option is set to 0.1 (this is the default). This option controls how compute cells are preserved near walls. Changing this value may prevent flooding. We usually use 0.01 m for a full-scale aircraft mesh.
+
+  - The ``oversetpriority`` option can be used to specify a dictionary in which the key is the family name of a mesh and the corresponding value is a factor to multiply the volumes of that mesh's cells by for the hole-cutting algorithm. The hole-cutting algorithm prioritizes keeping smaller cells, so this can be used to prioritize keeping the cells of a certain volume mesh. We don't specify anything for the ``oversetpriority`` but just include it here to show some of the options available.
+
+There are other overset options that have not been discussed here.
+Those can be found in the `pyADflow run script <https://github.com/mdolab/adflow/blob/master/python/pyADflow.py>`_. 
 
 Run it yourself!
 ================================================================================
@@ -44,30 +59,36 @@ Run the script:
 
     $ python ihc_check.py
 
+If all goes well, the output will show that there are 0 ``orphans`` and there will not be any error messages related to connectivities.
+
 Visualizing the iblank values in tecplot
 ================================================================================
 
-  - Load ``overset_combined_IHC.cgns``.
-  - Check ``Advanced options`` and click ``Open``.
-  - Select ``One Tecplot zone per non-poly CGNS zone/solution``.
-  - Check ``Mesh`` under ``Show zone layers``.
-  - Zoom in to the symmetry plane.
-  - Check ``Contour`` under ``Show zone layers``.
-  - Click on ``Details...`` next to ``Contour``.
-  - Select ``iblank`` in drop-down menu at the top left.
-  - Click on ``Set levels...``` and set levels to a minimum of -3 and a maximum of 0.
-  - Set the number of levels to 4 levels, then click ``OK`` and ``Close``.
-  - Click on ``Zone Style...``, go to the ``Contour`` tab, then highlight all the zones (ctrl+A) and change the ``Contour Type`` to ``Primary value flood`` (right click).
-  - Unckeck (under the ``Show Contour`` column) all the zones with ``wing_vols_combine`` and then click ``Close``.
-  - Finally, unselect ``Shade`` under ``Show zone layers`` if it was selected by default.
+Now we can check what roles the different cells in the overlapping regions have been given.
+Follow the following instructions in Tecplot.
+
+  - Load ``overset_combined_IHC.cgns`` but check ``Advanced options`` before clicking ``Open``
+  - Select ``One Tecplot zone per non-poly CGNS zone/solution`` and click ``OK``
+  - Check ``Mesh`` under ``Show zone layers`` (select ``yes`` if it asks you if you want to turn on surfaces)
+  - Zoom in to the symmetry plane
+  - Check ``Contour`` under ``Show zone layers``
+  - Click on ``Details...`` next to ``Contour``
+  - Select ``iblank`` in the drop-down menu at the top left
+  - Click on ``Set levels...`` and set the minimum level to -3 and the maximum level to 0
+  - Set the number of levels to 4, then click ``OK`` and ``Close``
+  - Click on ``Zone Style...``, go to the ``Contour`` tab, then highlight all the zones (ctrl+A) and change the ``Contour Type`` to ``Primary value flood`` (right click on the contour type of one of the zones)
+  - Unckeck (under the ``Show Contour`` column) all the zones with ``wing_vols_combine`` and then click ``Close``
+  - Finally, uncheck ``Shade`` under ``Show zone layers`` if it was selected by default
+
+You should see something like the following image.
 
 .. image:: images/overset_iblank_background.png
-  :scale: 25
+  :scale: 50
 
-Now check all zones with ``background`` and unselect all zones with ``wing_vols_combine``.
+Now turn on the contours of zones with ``background`` and turn off the contours of all zones with ``wing_vols_combine``.
 
 .. image:: images/overset_iblank_wings.png
-  :scale: 25
+  :scale: 50
 
 .. centered::
     :ref:`overset_volume_meshes` | :ref:`overset_analysis`
