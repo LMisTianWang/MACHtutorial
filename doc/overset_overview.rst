@@ -51,40 +51,21 @@ Directory Structure
     |-- geometry
     |   |-- generate_wing.py
     |   |-- NACA642A015.dat
-    |   |-- wing.dat
-    |   |-- wing.tin
     |-- mesh
     |   |-- surface
     |       |-- wing.cgns
     |       |-- icem_proj_files
     |   |-- volume
-    |       |-- wing.cgns
     |       |-- run_pyhyp.py
-    |       |-- wing_vol_front.cgns
-    |       |-- wing_vol_back.cgns
-    |       |-- wing_vol_front_c.cgns
-    |       |-- wing_vol_back_c.cgns
-    |       |-- wing_vol_back_c_t.cgns
-    |       |-- wing_vols_combined.cgns
     |       |-- generate_overset.py
-    |       |-- overset_combined.cgns
     |-- ihc_check
     |   |-- ihc_check.py
-    |   |-- overset_combined.cgns
     |-- analysis
     |   |-- aero_tandem.py
-    |   |-- overset_combined.cgns
     |-- ffd
     |   |-- tandem_ffds.py
-    |   |-- ffd_front_wing.xyz
-    |   |-- ffd_back_wing.xyz
-    |   |-- ffd_global.xyz
     |-- opt
     |   |-- aero_opt_tandem.py
-    |   |-- overset_combined.cgns
-    |   |-- ffd_front_wing.xyz
-    |   |-- ffd_back_wing.xyz
-    |   |-- ffd_global.xyz
 
 .. centered::
     :ref:`intro` | :ref:`overset_geom`
