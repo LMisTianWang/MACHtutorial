@@ -1,7 +1,7 @@
 #rst Import libraries
 import numpy
 from pygeo import DVGeometry
-from pywarp import MBMesh
+from idwarp import USMesh
 
 #rst Create DVGeometry object
 FFDFile = 'ffd.xyz'
@@ -44,7 +44,7 @@ DVGeo.addGeoDVSectionLocal('slocal', secIndex='k', axis=1, lower=-0.5, upper=0.5
 #rst Embed points
 gridFile = 'wing_vol.cgns'
 meshOptions = {'gridFile':gridFile}
-mesh = MBMesh(options=meshOptions)
+mesh = USMesh(options=meshOptions)
 coords = mesh.getSurfaceCoordinates()
 
 DVGeo.addPointSet(coords, 'coords')

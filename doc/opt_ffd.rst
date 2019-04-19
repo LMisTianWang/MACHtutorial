@@ -107,7 +107,7 @@ Import libraries
 
 As mentioned in the introduction, the geometric parametrization code is housed in the DVGeometry class which resides in the pyGeo module.
 So to begin with, we import DVGeometry from pyGeo.
-We also import pyWarp so that we can use one of its functions to obtain surface coordinates from our volume mesh.
+We also import IDWarp so that we can use one of its functions to obtain surface coordinates from our volume mesh.
 
 Instantiate DVGeometry
 ----------------------
@@ -237,7 +237,7 @@ The following snippets of code allow us to manually change the design variables 
 Embed points
 ~~~~~~~~~~~~
 First we have to embed at least one point set in the FFD.
-Normally, ADflow automatically embeds the surface mesh nodes in the FFD, but here we will embed surface coordinates obtained using pyWarp's ``getSurfaceCoordinates`` function (just for this example without ADflow).
+Normally, ADflow automatically embeds the surface mesh nodes in the FFD, but here we will embed surface coordinates obtained using IDWarp's ``getSurfaceCoordinates`` function (just for this example without ADflow).
 
 .. literalinclude:: ../tutorial/opt/ffd/parametrize.py
     :start-after: #rst Embed points
