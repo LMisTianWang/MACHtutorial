@@ -6,7 +6,7 @@ from baseclasses import AeroProblem
 from adflow import ADFLOW
 from pygeo import DVGeometry, DVConstraints
 from pyoptsparse import Optimization, OPT
-from pywarp import MBMesh
+from idwarp import USMesh
 from multipoint import multiPointSparse
 
 MP = multiPointSparse(MPI.COMM_WORLD)
@@ -148,7 +148,7 @@ if comm.rank == 0:
 #rst dvcons
 
 meshOptions = {'gridFile':gridFile, 'warpType':'algebraic',}
-mesh = MBMesh(options=meshOptions, comm=comm)
+mesh = USMesh(options=meshOptions, comm=comm)
 CFDSolver.setMesh(mesh)
 
 def cruiseFuncs(x):

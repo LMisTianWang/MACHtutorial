@@ -55,7 +55,7 @@ Made in the MDOlab
 * `pyGeo <https://github.com/mdolab/pygeo>`_
 * `pySpline <https://github.com/mdolab/pyspline>`_
 * `pyHyp <https://github.com/mdolab/pyhyp>`_
-* `pyWarp <https://github.com/mdolab/pywarp>`_
+* `IDWarp <https://github.com/mdolab/idwarp>`_
 * `pyLayout <https://github.com/mdolab/pylayout>`_
 * `TACS <https://github.com/mdolab/tacs_orig>`_
 * `pyOptSparse <https://github.com/mdolab/pyoptsparse>`_

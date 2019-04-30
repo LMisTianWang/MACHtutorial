@@ -6,6 +6,8 @@ from adflow import ADFLOW
 
 gridFile = 'overset_combined.cgns'
 
+oversetpriority = {}
+
 aeroOptions = {
     # I/O Parameters
     'gridFile':gridFile,
