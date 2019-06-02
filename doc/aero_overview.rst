@@ -39,6 +39,7 @@ Table of Contents
    aero_pyhyp
    aero_cgnsutils
    aero_adflow
+   aero_adflow_polar
 
 Directory Structure
 ================================================================================

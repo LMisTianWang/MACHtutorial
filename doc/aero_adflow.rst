@@ -1,6 +1,6 @@
 
 .. centered::
-    :ref:`aero_cgnsutils` | :ref:`intro`
+    :ref:`aero_cgnsutils` | :ref:`aero_adflow_polar`
 
 .. _aero_adflow:
 
@@ -13,7 +13,7 @@ Introduction
 There is no graphical user interface for ADflow.
 The cases are prepared with python scripts and run from the command line.
 In this section of the tutorial, we will explain the nuts and bolts of a basic ADflow runscript.
-You will find a complete introduction to ADflow in the `docs <http://mdolab.engin.umich.edu/doc/packages/adflow/doc/introduction.html>`_ .
+You will find a complete introduction to ADflow in the `docs <http://mdolab.engin.umich.edu/docs/packages/adflow/doc/introduction.html>`_ .
 
 Files
 ================================================================================
@@ -40,7 +40,7 @@ Import libraries
    :end-before: #rst ADflow options
 
 First we import ADflow.
-We also need to import `baseclasses <https://bitbucket.org/mdolab/pygeo>`_, which is a library of problem and solver classes used to encourage a common API within the MACH suite.
+We also need to import `baseclasses <https://github.com/mdolab/baseclasses>`_, which is a library of problem and solver classes used to encourage a common API within the MACH suite.
 In this case we will be using the AeroProblem, which is a container for the flow conditions that we want to analyze.
 Finally, it is convenient to import the mpi4py library to prevent printing multiple times if we are running on multiple processors.
 Importing mpi4py is not entirely necessary in the runscript because ADflow does it internally if necessary.
@@ -109,4 +109,4 @@ First make the output directory and then run the script:
     $ mpirun -np 4 python aero_run.py
 
 .. centered::
-    :ref:`aero_cgnsutils` | :ref:`intro`
+    :ref:`aero_cgnsutils` | :ref:`aero_adflow_polar`
