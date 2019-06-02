@@ -1,7 +1,7 @@
 # ==============================================================================
 #         Import modules
 # ==============================================================================
-#rst Imports (begin)
+#rst Imports (beg)
 from __future__ import print_function
 import numpy
 from mpi4py import MPI
@@ -9,29 +9,22 @@ from baseclasses import *
 from tacs_orig import *
 from adflow import *
 from pywarp import *
-from multipoint import *
 from pyaerostructure import *
 
 #rst Imports (end)
+
 gridFile = 'wing_vol.cgns'
 bdfFile = 'wingbox.bdf'
 
-#rst comms (begin)
+#rst comm (start)
 gcomm = MPI.COMM_WORLD
+#rst comm (end)
 
-# Set 1 processor for TACS, the rest go to ADflow
-npStruct = 1
-npAero = gcomm.size - npStruct
 
-# Create aero/structural comms
-comm, flags = createGroups([npStruct, npAero], comm=gcomm)
-structID = 0    # zeroth group is structure
-aeroID = 1      # first group is aero
-#rst comms (end)
 # ==============================================================================
 #         Set up case problems
 # ==============================================================================
-#rst problems (start)
+#rst ASP (start)
 # Set up aerodynamic problem
 ap = AeroProblem(name='cruise', mach=0.8, altitude=10000,
                  areaRef=45.5, alpha=2.0, chordRef=3.25,
@@ -42,11 +35,11 @@ sp = StructProblem(ap.name, evalFuncs=['mass'])
 
 # Create aerostructural problem
 asp = AeroStructProblem(ap, sp)
-#rst problems (end)
+#rst ASP (end)
 # ==============================================================================
 #         Set up aerodynamic analysis
 # ==============================================================================
-#rst aeroOptions (start)
+#rst options (start)
 aeroOptions = {
     # I/O Parameters
     'gridFile':gridFile,
@@ -95,38 +88,12 @@ meshOptions = {
     'gridFile':gridFile,
     'warpType':'algebraic',
     }
-#rst aeroOptions (end)
-# Set up ADFLOW on the aero procs
-if flags[aeroID]:
-    # Create solver
-    CFDSolver = ADFLOW(options=aeroOptions, comm=comm)
 
-    # Set up mesh warping
-    mesh = MBMesh(options=meshOptions, comm=comm)
-    CFDSolver.setMesh(mesh)
-
-    # Do not set up TACS on these procs
-    FEASolver = None
-#rst aerosolver (end)
-# ==============================================================================
-#         Set up structural analysis
-# ==============================================================================
-#rst structopt (start)
 structOptions = {
     'gravityVector':[0, -9.81, 0],
     'projectVector':[0, 1, 0],     # normal to planform
 }
-#rst structopt (end)
-# Set up TACS on the struct proc
-if flags[structID]:
-    FEASolver = pytacs.pyTACS(bdfFile, comm=comm, options=structOptions)
-    execfile('setup_structure.py')
-    CFDSolver = None
-#rst feaSolver (end)
-# ==============================================================================
-#         Set up aerostructural analysis
-# ==============================================================================
-#rst AS options (start)
+
 mdOptions = {
     # Tolerances
     'relTol':1e-5,
@@ -149,17 +116,39 @@ mdOptions = {
     }
 
 transferOptions = {}
-#rst AS options (end)
+#rst options (end)
+# Set up ADFLOW on the aero procs
+# Create solver
+CFDSolver = ADFLOW(options=aeroOptions, comm=gcomm)
+
+# Set up mesh warping
+mesh = MBMesh(options=meshOptions, comm=gcomm)
+CFDSolver.setMesh(mesh)
+#rst aerosolver (end)
+# ==============================================================================
+#         Set up structural analysis
+# ==============================================================================
+
+#rst feaSolver (start)
+# Set up TACS on the struct proc
+FEASolver = pytacs.pyTACS(bdfFile, comm=gcomm, options=structOptions)
+execfile('setup_structure.py')
+#rst feaSolver (end)
+# ==============================================================================
+#         Set up aerostructural analysis
+# ==============================================================================
+
+#rst transfer object (start)
 # Create transfer object
 transfer = TACSLDTransfer(CFDSolver, FEASolver, gcomm, options=transferOptions)
-#rst transfer (end)
+#rst transfer object (end)
 # Create the final aerostructural solver
 AS = AeroStruct(CFDSolver, FEASolver, transfer, gcomm, options=mdOptions)
-#rst ASSetup (end)
+#rst AS object (end)
 # ==============================================================================
 #         Solve!
 # ==============================================================================
-#rst ASSolve
+#rst ASSolve (start)
 # Solve the aerostructural problem
 funcs = {}
 AS(asp)
