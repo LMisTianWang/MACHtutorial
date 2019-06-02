@@ -13,7 +13,7 @@ Introduction
 The objective of this section is to create a volume mesh using pyHyp.
 The surface mesh serves as the seed for hyperbolically marching the mesh to the farfield.
 Generating the volume mesh in this way is fast, repeatable, and results in a high-quality mesh.
-More details on pyHyp can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_ or in the code itself.
+More details on pyHyp can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/docs/packages/pyhyp/doc/index.html>`_ or in the code itself.
 
 Files
 ================================================================================
@@ -43,7 +43,7 @@ This is the standard way of importing the pyHyp library.
 Options
 -------
 For each module in MACH, we generally pass in options using a dictionary.
-A complete list of definitions of the pyHyp options can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/doc/packages/pyhyp/doc/index.html>`_ under the section "Usage with Plot3d Files".
+A complete list of definitions of the pyHyp options can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/docs/packages/pyhyp/doc/index.html>`_ under the section "Usage with Plot3d Files".
 Here we will point a few of the more basic options.
 For pyHyp, the options can be organized like so:
 
@@ -65,6 +65,7 @@ General options:
 
     ``outerFaceBC``
         Tells pyHyp to which boundary condition to apply to the outermost face of the extruded mesh.
+        Either ``farfield`` or ``overset``.
 
     ``families``
         Name given to wall surfaces. If a dictionary is submitted, each wall patch can have a different name. This can help the user to apply certain operations to specific wall patches in ADflow.
@@ -84,6 +85,10 @@ Grid parameters:
 
     ``marchDist``
         Distance of the far-field.
+
+The following options are related to the algorithms that are used to generate the mesh and usually these default values do not need to be modified.
+More information can be found in the `pyHyp docs <http://mdolab.engin.umich.edu/docs/packages/pyhyp/doc/index.html>`_.
+For example, ``epsE`` may be of interest when dealing with concave corners.
 
 .. literalinclude:: ../tutorial/aero/meshing/volume/run_pyhyp.py
     :start-after: #rst pseudo

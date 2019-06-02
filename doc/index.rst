@@ -13,6 +13,7 @@ The user does not need to know Fortran to complete this tutorial, but if Python 
 Be forewarned that ignorance of Python will be cured by any lengthy interaction with the MDOlab. :)
 
 This tutorial starts from scratch and leads the user through the steps necessary to conduct aerostructural optimization of a B717 wing.
+The tutorial files are located on `GitHub <https://github.com/mdolab/MACHtutorial/>`_.
 The scripts referenced in the tutorial can be found in the tutorial directory, organized according to section.
 Although these scripts should be executable without any modifications, **we highly recommend that you create a separate directory and type out the lines of code by yourself.**
 As you do this, ask yourself, "Do I understand why the code is written this way?"
@@ -27,6 +28,10 @@ where ``my_tutorial`` is the name of the folder in which you will build your scr
 The directory structures for each section of the tutorial, including all files, are displayed at the beginning of each section.
 Throughout the tutorial, we will refer to the location of your developing tutorial as ``my_tutorial``, so if you chose a different name make sure to adjust your commands accordingly.
 
+Before continuing with the tutorial, make sure that the MDOLab framework is already installed on your machine.
+If you set up your machine using an MDOLab iso, then the required packages should already be installed.
+If not, follow the instructions for installing the MDOLab framework from `scratch <http://mdolab.engin.umich.edu/docs/installInstructions/installFromScratch.html>`_.
+
 Table of Contents
 ================================================================================
 
@@ -39,6 +44,7 @@ Table of Contents
    aerostruct_overview
    opt_overview
    airfoilopt_overview
+   overset_overview
 
 Required Software
 ================================================================================
@@ -49,13 +55,17 @@ Made in the MDOlab
 * `pyGeo <https://github.com/mdolab/pygeo>`_
 * `pySpline <https://github.com/mdolab/pyspline>`_
 * `pyHyp <https://github.com/mdolab/pyhyp>`_
-* `pyWarp <https://github.com/mdolab/pywarp>`_
+* `IDWarp <https://github.com/mdolab/idwarp>`_
 * `pyLayout <https://github.com/mdolab/pylayout>`_
-* `TACS <https://github.com/gjkennedy/tacs>`_
+* `TACS <https://github.com/mdolab/tacs_orig>`_
 * `pyOptSparse <https://github.com/mdolab/pyoptsparse>`_
 * `cgnsUtilities <https://github.com/mdolab/cgnsutilities>`_
 * `baseclasses <https://github.com/mdolab/baseclasses>`_
 * `pyAeroStructure <https://github.com/mdolab/pyaerostructure>`_
+* `multipoint <https://github.com/mdolab/multipoint.git>`_
+
+Note: These links take you to the GitHub repositories.
+To see their documentation instead, go back to the main documentation `page <http://mdolab.engin.umich.edu/docs/index.html>`_.
 
 External Software
 -----------------

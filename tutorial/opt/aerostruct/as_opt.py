@@ -9,7 +9,7 @@ import sys
 from pprint import pprint
 from mpi4py import MPI
 from baseclasses import *
-from tacs import *
+from tacs_orig import *
 from adflow import ADFLOW
 from pywarp import *
 from pygeo import *

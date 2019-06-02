@@ -1,21 +1,18 @@
-This repository contains a step-by-step tutorial for the tools used in the MDOlab.
-These tools fall under the umbrella of the framework MDO of Aircraft Configurations
-with High-fidelity (MACH).
+# MACH Tutorial
+This repository contains a step-by-step tutorial for some of the tools in the MACH framework.
+The MACH (MDO of Aircraft Configurations with High-fidelity) framework is developed by the [MDO Lab](http://mdolab.engin.umich.edu).
+It facilitates the design, analysis, and optimization of large, multi-disciplinary systems.
+The tutorial covers the basics needed to optimize the aerodynamic surface and internal wingbox structure of a basic wing.
+It also includes an airfoil optimization example.
 
-## Building the docs
-From the terminal, navigate to MACHtutorial/doc.
+## Tutorial documentation
+You can either view the [online tutorial](http://mdolab.engin.umich.edu/docs/packages/machtutorial/doc/index.html) or build the tutorial documentation locally.
+To generate the tutorial locally, open a terminal and enter the following commands:
 
-Run
+    $ cd MACHtutorial/doc
     $ make html
 
-This generates html files in _build/html/.
-
-Run
-    $ firefox _build/html/index.html
-or
-    $ google-chrome _build/html/index.html
-
-to open the tutorial in your browser.
+This generates html files in _build/html/. You can then open _build/html/index.html in your preferred browser to view the tutorial documentation.
 
 ## Required Packages to build
 - Sphinx (1.6.6)
