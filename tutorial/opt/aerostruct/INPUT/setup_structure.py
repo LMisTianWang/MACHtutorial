@@ -2,7 +2,7 @@
 #       Set up design variable groups
 # ==============================================================================
 # Give each rib its own design variable group under the 'RIBS' category
-for i in xrange(1,19):
+for i in range(1,19):
     FEASolver.addDVGroup('RIBS', include='RIB.%2.2d'%i)
 
 # Split each spar into 9 design variable groups
@@ -44,7 +44,7 @@ for bounds in boundLists:
 # Skins at root are not included...do them here
 u_skins = []
 l_skins = []
-for i in xrange(1,19):
+for i in range(2):
     u_skins.append('U_SKIN/U_SKIN.%3.3d'%(i))
     l_skins.append('L_SKIN/L_SKIN.%3.3d'%(i))
 

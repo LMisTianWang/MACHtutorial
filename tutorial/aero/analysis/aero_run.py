@@ -2,7 +2,7 @@
 from __future__ import print_function
 import numpy
 from adflow import ADFLOW
-from baseclasses import *
+from baseclasses import AeroProblem
 from mpi4py import MPI
 #rst ADflow options
 aeroOptions = {

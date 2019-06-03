@@ -3,9 +3,8 @@
 # ==============================================================================
 from __future__ import print_function
 import numpy
-from baseclasses import *
-from tacs_orig import *
-from repostate import *
+from baseclasses import StructProblem
+from tacs_orig import functions, pytacs, constitutive
 from mpi4py import MPI
 
 # ==============================================================================
@@ -150,3 +149,5 @@ if MPI.COMM_WORLD.rank == 0:
 
 # Write the final solution
 FEASolver.writeOutputFile(sp.name + '_final.f5')
+
+FEASolver.writeDisplacementsFile(sp, 'disp.txt')
