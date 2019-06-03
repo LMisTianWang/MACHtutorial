@@ -8,15 +8,13 @@ import numpy
 import sys
 from pprint import pprint
 from mpi4py import MPI
-from baseclasses import *
-from tacs_orig import *
+from baseclasses import AeroProblem, StructProblem, AeroStructProblem
+from tacs_orig import functions, pytacs, constitutive
 from adflow import ADFLOW
-from pywarp import *
-from pygeo import *
-from pyspline import *
-from multipoint import *
-from pyaerostructure import *
-from repostate import *
+from pywarp import MBMesh
+from pygeo import DVConstraints, DVGeometry
+from multipoint import multiPointSparse, redirectIO
+from pyaerostructure import TACSLDTransfer, AeroStruct
 from pyoptsparse import Optimization, OPT
 # ==============================================================================
 # Input Information
@@ -30,7 +28,6 @@ parser.add_argument("--npmaneuver", type=int, default=2)
 args = parser.parse_args()
 
 outputDirectory = args.output
-saveRepositoryInfo(outputDirectory)
 gridFile = 'wing_vol.cgns'
 
 # ==============================================================================
@@ -278,7 +275,7 @@ optProb.addCon('cruise_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
     wrt=['struct', 'alpha_cruise'] + geoVars)
 optProb.addCon('maneuver_lift_con', lower=0.0, upper=0.0, scale=1.0/Mref,
     wrt=['struct', 'alpha_maneuver'] + geoVars)
-for j in xrange(3):
+for j in range(3):
     optProb.addCon('maneuver_ks%d'%j, upper=1.0,
     wrt=['struct', 'alpha_maneuver'] + geoVars)
 

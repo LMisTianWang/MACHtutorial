@@ -5,12 +5,12 @@
 from __future__ import print_function
 import numpy
 from mpi4py import MPI
-from baseclasses import *
-from tacs_orig import *
-from adflow import *
-from pywarp import *
-from multipoint import *
-from pyaerostructure import *
+from baseclasses import AeroProblem, StructProblem, AeroStructProblem
+from tacs_orig import functions, constitutive, pytacs
+from adflow import ADFLOW
+from pywarp import MBMesh
+from multipoint import createGroups
+from pyaerostructure import TACSLDTransfer, AeroStruct
 
 #rst Imports (end)
 gridFile = 'wing_vol.cgns'

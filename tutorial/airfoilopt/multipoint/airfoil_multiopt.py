@@ -194,7 +194,7 @@ def cruiseFuncs(x):
     funcs = {}
     DVCon.evalFunctions(funcs)
 
-    for i in xrange(nFlowCases):
+    for i in range(nFlowCases):
         if i%nGroup == ptID:
             aeroProblems[i].setDesignVars(x)
             CFDSolver(aeroProblems[i])
@@ -207,7 +207,7 @@ def cruiseFuncs(x):
 def cruiseFuncsSens(x, funcs):
     funcsSens = {}
     DVCon.evalFunctionsSens(funcsSens)
-    for i in xrange(nFlowCases):
+    for i in range(nFlowCases):
         if i%nGroup == ptID:
             CFDSolver.evalFunctionsSens(aeroProblems[i], funcsSens)
     if MPI.COMM_WORLD.rank == 0:
@@ -217,12 +217,12 @@ def cruiseFuncsSens(x, funcs):
 def objCon(funcs, printOK):
     # Assemble the objective and any additional constraints:
     funcs['obj'] = 0.0
-    for i in xrange(nFlowCases):
+    for i in range(nFlowCases):
         ap = aeroProblems[i]
-        funcs['obj'] += funcs[ap['cd']] / nFlowCases  
+        funcs['obj'] += funcs[ap['cd']] / nFlowCases
         funcs['cl_con_'+ap.name] = funcs[ap['cl']] - mycl[i]
     if printOK:
-       print 'funcs in obj:', funcs 
+       print 'funcs in obj:', funcs
     return funcs
 #rst funcs (end)
 # ======================================================================
@@ -243,7 +243,7 @@ DVGeo.addVariablesPyOpt(optProb)
 
 # Add constraints
 DVCon.addConstraintsPyOpt(optProb)
-for i in xrange(nFlowCases):
+for i in range(nFlowCases):
     ap = aeroProblems[i]
     optProb.addCon('cl_con_'+ap.name, lower=0.0, upper=0.0, scale=1.0)
 
